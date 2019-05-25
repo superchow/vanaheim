@@ -1,0 +1,4 @@
+**/node_modules
+packages/vanaheim-server/typings
+packages/vanaheim-server/logs
+packages/vanaheim-server/run

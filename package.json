@@ -1,0 +1,37 @@
+{
+  "name": "root",
+  "private": true,
+  "scripts": {
+    "lint": "eslint --ext .js,.ts,.tsx .",
+    "bootstrap": "lerna bootstrap --npm-client=yarn",
+    "dev-server": "lerna run --scope vanaheim-server dev --stream",
+    "dev-website": "lerna run --scope vanaheim-website start --stream",
+    "lint-staged": "lint-staged"
+  },
+  "lint-staged": {
+    "**/*.{js,ts,tsx,jsx}": [
+      "yarn lint --fix",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "@diamondyuan/eslint-config-react-typescript": "^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^1.9.0",
+    "@typescript-eslint/parser": "^1.9.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.16.0",
+    "eslint-config-prettier": "^4.3.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "^7.13.0",
+    "husky": "^2.3.0",
+    "lerna": "^3.13.0",
+    "lint-staged": "^8.1.7",
+    "prettier": "^1.17.1",
+    "typescript": "^3.4.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  }
+}
