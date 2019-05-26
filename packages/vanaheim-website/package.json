@@ -2,7 +2,7 @@
   "name": "vanaheim-website",
   "private": true,
   "scripts": {
-    "start": "umi dev",
+    "dev": "umi dev",
     "build": "umi build",
     "test": "umi test"
   },
@@ -23,16 +23,6 @@
     "umi": "^2.6.1",
     "umi-plugin-react": "^1.6.0",
     "umi-types": "^0.2.0"
-  },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "tslint --fix",
-      "git add"
-    ],
-    "*.{js,jsx}": [
-      "eslint --fix",
-      "git add"
-    ]
   },
   "engines": {
     "node": ">=8.0.0"

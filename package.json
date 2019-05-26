@@ -2,10 +2,12 @@
   "name": "root",
   "private": true,
   "scripts": {
+    "commit": "git-cz",
     "lint": "eslint --ext .js,.ts,.tsx .",
     "bootstrap": "lerna bootstrap --npm-client=yarn",
     "dev-server": "lerna run --scope vanaheim-server dev --stream",
-    "dev-website": "lerna run --scope vanaheim-website start --stream",
+    "dev-website": "lerna run --scope vanaheim-website dev --stream",
+    "dev": "lerna run dev --stream",
     "lint-staged": "lint-staged"
   },
   "lint-staged": {
@@ -19,6 +21,8 @@
     "@typescript-eslint/eslint-plugin": "^1.9.0",
     "@typescript-eslint/parser": "^1.9.0",
     "babel-eslint": "^10.0.1",
+    "commitizen": "^3.1.1",
+    "cz-conventional-changelog": "^2.1.0",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.3.0",
     "eslint-plugin-prettier": "^3.1.0",
@@ -28,6 +32,11 @@
     "lint-staged": "^8.1.7",
     "prettier": "^1.17.1",
     "typescript": "^3.4.5"
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
   },
   "husky": {
     "hooks": {
