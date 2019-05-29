@@ -7,7 +7,7 @@
     "bootstrap": "lerna bootstrap --npm-client=yarn",
     "dev-server": "lerna run --scope vanaheim-server dev --stream",
     "dev-website": "lerna run --scope vanaheim-website dev --stream",
-    "dev": "lerna run dev --stream",
+    "dev": "lerna run  --parallel dev --stream",
     "lint-staged": "lint-staged"
   },
   "lint-staged": {

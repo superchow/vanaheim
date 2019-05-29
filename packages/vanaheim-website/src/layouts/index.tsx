@@ -3,25 +3,14 @@ import { Layout, Menu, Icon } from 'antd';
 import menus from 'common/menus';
 import { connect } from 'dva';
 import { GlobalState, UmiComponentProps } from '@/common/types';
-import { bindActionCreators, Dispatch } from 'redux';
 import { SelectParam } from 'antd/lib/menu';
 import styles from './index.scss';
 
 const { Content, Sider } = Layout;
 
 const mapStateToProps = (state: GlobalState) => state;
-
-const useActions = {};
-
 type PageStateProps = ReturnType<typeof mapStateToProps>;
-
-const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
-  actions: bindActionCreators<PageDispatchProps, PageDispatchProps>(useActions, dispatch),
-});
-type PageDispatchProps = typeof useActions;
-type PageProps = PageStateProps & {
-  actions: PageDispatchProps;
-} & UmiComponentProps;
+type PageProps = PageStateProps & UmiComponentProps;
 
 class BasicLayout extends PureComponent<PageProps> {
   state = {
@@ -76,7 +65,4 @@ class BasicLayout extends PureComponent<PageProps> {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(BasicLayout);
+export default connect(mapStateToProps)(BasicLayout);

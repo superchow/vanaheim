@@ -2,3 +2,5 @@
 packages/vanaheim-server/typings
 packages/vanaheim-server/logs
 packages/vanaheim-server/run
+packages/vanaheim-shared/lib
+

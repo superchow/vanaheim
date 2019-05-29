@@ -2,13 +2,14 @@ import { EggAppConfig, PowerPartial } from 'egg';
 
 export default function() {
   const config = {
-    keys: '123',
     mongoose: {
       url: 'mongodb://127.0.0.1/admin',
       options: {},
     },
     security: {
-      domainWhiteList: ['http://localhost:4200'],
+      csrf: {
+        enable: false,
+      },
     },
     cors: {
       origin: '*',

@@ -1,13 +1,6 @@
 import { Application } from 'egg';
 import { Document, Schema } from 'mongoose';
-
-export interface Workspace {
-  id: string;
-  name: string;
-  path: string;
-  createdAt: string;
-  modifiedAt: string;
-}
+import { Workspace } from 'vanaheim-shared';
 
 export default (app: Application) => {
   const mongoose = app.mongoose;

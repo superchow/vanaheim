@@ -1,9 +1,5 @@
+import { AddWorkspaceRequest, DeleteWorkspaceRequest, ListFileResponse } from 'vanaheim-shared';
 import { Controller } from 'egg';
-
-interface AddWorkspaceRequest {
-  name: string;
-  path: string;
-}
 
 export default class WorkspaceController extends Controller {
   public async add() {
@@ -16,9 +12,12 @@ export default class WorkspaceController extends Controller {
       },
       body
     );
-    const result = await this.service.workspace.add(body.name, body.path);
+    const { path, name, _id: id, createdAt, modifiedAt } = await this.service.workspace.add(
+      body.name,
+      body.path
+    );
     ctx.body = {
-      data: result,
+      data: { path, name, id, createdAt, modifiedAt },
     };
   }
 
@@ -27,5 +26,36 @@ export default class WorkspaceController extends Controller {
     ctx.body = {
       data: await this.service.workspace.list(),
     };
+  }
+
+  public async delete() {
+    const { ctx } = this;
+    const body: DeleteWorkspaceRequest = ctx.request.body;
+    ctx.validate(
+      {
+        id: 'string',
+      },
+      body
+    );
+    await this.service.workspace.delete(body.id);
+    ctx.body = {
+      data: body.id,
+    };
+  }
+
+  public async listFile() {
+    const { ctx } = this;
+    ctx.validate(
+      {
+        parent: 'string',
+      },
+      ctx.query
+    );
+
+    const response: ListFileResponse = {
+      data: [...(await ctx.service.workspace.listFile(ctx.query.parent))],
+    };
+
+    ctx.body = response;
   }
 }
