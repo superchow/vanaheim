@@ -125,11 +125,11 @@ export default class ComicImporter extends React.PureComponent<
             <Form.Item label="模板">
               <Radio.Group value={this.state.patternIndex} onChange={this.handleChangePatternIndex}>
                 {pattern.map((p, index) => (
-                  <Radio key={p} value={index}>
+                  <Radio className={style.radioStyle} key={p} value={index}>
                     {p}
                   </Radio>
                 ))}
-                <Radio value={pattern.length}>
+                <Radio className={style.radioStyle} value={pattern.length}>
                   <Input onChange={this.handleCostumePatternChange} />
                 </Radio>
               </Radio.Group>

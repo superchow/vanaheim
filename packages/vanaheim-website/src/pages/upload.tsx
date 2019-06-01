@@ -1,12 +1,9 @@
 import React from 'react';
 import { Row, Col } from 'antd';
 import style from './index.scss';
-import ComicImporter, { ComicImage, ComicFolder } from '@/components/comicImporter';
+import ComicImporter, { ComicFolder } from '@/components/comicImporter';
 
-interface UploadPageState {
-  dirname: string;
-  files: ComicImage[];
-}
+type UploadPageState = ComicFolder & {};
 
 export default class UploadPage extends React.PureComponent<any, UploadPageState> {
   constructor(props: any) {
@@ -14,14 +11,12 @@ export default class UploadPage extends React.PureComponent<any, UploadPageState
     this.state = {
       dirname: '',
       files: [],
+      titleInfo: {},
     };
   }
 
   handleSelect = (comicFolder: ComicFolder) => {
-    console.log(comicFolder);
-    this.setState({
-      ...comicFolder,
-    });
+    this.setState(comicFolder);
   };
 
   render() {
@@ -32,7 +27,7 @@ export default class UploadPage extends React.PureComponent<any, UploadPageState
           <ComicImporter
             onSelect={this.handleSelect}
             className={style.fileSelect}
-            pattern={['[作者]原文标题']}
+            pattern={['[作者]原文标题', '[团体(作者)]原文标题']}
           />
         )}
         <div>{dirname}</div>

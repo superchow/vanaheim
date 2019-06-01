@@ -71,6 +71,7 @@ class Workspace extends React.PureComponent<PageProps, PageState> {
       {
         title: '创建时间',
         dataIndex: 'createdAt',
+        key: 'createdAt',
         render: (data: string) => dayjs(data).format('YYYY-MM-DD HH:mm:ss'),
       },
       {
@@ -89,6 +90,7 @@ class Workspace extends React.PureComponent<PageProps, PageState> {
 
     return (
       <Table
+        rowKey="id"
         loading={loading.effects[asyncListWorkspace.type]}
         pagination={false}
         columns={columns}

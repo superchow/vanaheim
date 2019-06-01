@@ -1,10 +1,11 @@
 import React, { PureComponent } from 'react';
-import { Layout, Menu, Icon } from 'antd';
+import { Layout, Menu, Icon, PageHeader } from 'antd';
 import menus from 'common/menus';
 import { connect } from 'dva';
 import { GlobalState, UmiComponentProps } from '@/common/types';
 import { SelectParam } from 'antd/lib/menu';
 import styles from './index.scss';
+import pageHeaderInfo from 'common/pageHeaderInfo';
 
 const { Content, Sider } = Layout;
 
@@ -54,11 +55,16 @@ class BasicLayout extends PureComponent<PageProps> {
   };
 
   render() {
+    const title = pageHeaderInfo[this.props.history.location.pathname];
+
     return (
       <Layout>
         {this.handleRenderSider()}
         <Layout>
-          <Content className={styles.content}>{this.props.children}</Content>
+          <Content className={styles.content}>
+            {title && <PageHeader title={title.title} />}
+            <div style={{ padding: 20 }}>{this.props.children}</div>
+          </Content>
         </Layout>
       </Layout>
     );
