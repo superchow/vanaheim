@@ -8,6 +8,8 @@
     "dev-server": "lerna run --scope vanaheim-server dev --stream",
     "dev-website": "lerna run --scope vanaheim-website dev --stream",
     "dev": "lerna run  --parallel dev --stream",
+    "test": "lerna run  --parallel test --stream",
+    "test-shared": "lerna run --scope vanaheim-shared test --stream",
     "lint-staged": "lint-staged"
   },
   "lint-staged": {
@@ -18,6 +20,8 @@
   },
   "devDependencies": {
     "@diamondyuan/eslint-config-react-typescript": "^6.0.0",
+    "@types/mocha": "^5.2.6",
+    "@types/node": "^12.0.3",
     "@typescript-eslint/eslint-plugin": "^1.9.0",
     "@typescript-eslint/parser": "^1.9.0",
     "babel-eslint": "^10.0.1",
@@ -42,5 +46,8 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
+  },
+  "dependencies": {
+    "react-dropzone": "^10.1.5"
   }
 }

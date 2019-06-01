@@ -6,11 +6,10 @@ import { asyncListFile, setTreeData } from '@/actions/workspaceModal';
 import { connect } from 'dva';
 import { TreeNodeNormal } from 'antd/lib/tree-select/interface';
 import { AntTreeNodeExpandedEvent } from 'antd/lib/tree';
-import { formatMessage } from 'umi-plugin-locale';
 
 const FormItem = Form.Item;
 
-const mapStateToProps = ({ loading, workspaceModal }: GlobalState) => ({ workspaceModal, loading });
+const mapStateToProps = ({ workspaceModal }: GlobalState) => ({ workspaceModal });
 type PageStateProps = ReturnType<typeof mapStateToProps>;
 
 type PageOwnProps = {
@@ -67,7 +66,7 @@ class CreateForm extends React.PureComponent<ModelProps> {
     return (
       <Modal
         destroyOnClose
-        title={formatMessage({ id: 'Add Workspace' })}
+        title={'创建仓库'}
         visible
         onOk={this.okHandle}
         onCancel={() => handleModalVisible()}

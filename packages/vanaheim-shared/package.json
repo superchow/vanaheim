@@ -4,7 +4,24 @@
   "private": true,
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
   "scripts": {
-    "dev": "tsc -w"
+    "dev": "tsc -w",
+    "test": "egg-bin test"
+  },
+  "egg": {
+    "typescript": true
+  },
+  "devDependencies": {
+    "@types/mocha": "^5.2.6",
+    "@types/node": "^8.5.2",
+    "@types/power-assert": "^1.4.29",
+    "egg-bin": "^4.13.0",
+    "mocha": "^4.1.0"
+  },
+  "dependencies": {
+    "@types/mocha": "^5.2.6"
   }
 }

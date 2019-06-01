@@ -1,0 +1,23 @@
+.upload {
+  margin-bottom: 24px;
+}
+
+.dropzone {
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-width: 2px;
+  border-radius: 2px;
+  padding: 20px;
+  border-color: #eeeeee;
+  border-style: dashed;
+  background-color: #fafafa;
+  color: #bdbdbd;
+}
+
+.radioStyle {
+  display: block;
+  height: 30px;
+  line-height: 30px;
+}

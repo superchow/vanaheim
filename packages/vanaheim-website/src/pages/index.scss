@@ -1,3 +1,11 @@
-.demo {
-  background: red;
+.cover {
+  height: 0;
+  padding-bottom: 145%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% auto;
+  background-color: bisque;
+}
+.fileSelect {
+  margin-bottom: 24px;
 }

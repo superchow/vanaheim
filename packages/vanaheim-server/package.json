@@ -7,8 +7,7 @@
     "dev": "egg-bin dev",
     "tsc": "ets && tsc",
     "clean": "ets clean",
-    "test": "npm run lint -- --fix && npm run test-local",
-    "test-local": "egg-bin test",
+    "test": "egg-bin test",
     "cov": "egg-bin cov",
     "debug": "egg-bin debug"
   },
@@ -17,7 +16,6 @@
     "declarations": true
   },
   "dependencies": {
-    "@types/ioredis": "^4.0.6",
     "dayjs": "^1.8.14",
     "egg": "^2.22.2",
     "egg-cors": "^2.2.0",
@@ -37,10 +35,9 @@
     "vanaheim-shared": "0.0.1"
   },
   "devDependencies": {
-    "@types/mocha": "^2.2.40",
+    "@types/ioredis": "^4.0.6",
     "@types/mockjs": "^1.0.0",
     "@types/mz": "^0.0.32",
-    "@types/node": "^8.5.2",
     "@types/power-assert": "^1.4.29",
     "@types/supertest": "^2.0.0",
     "@types/uuid": "^3.4.3",
