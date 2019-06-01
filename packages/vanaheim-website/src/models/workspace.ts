@@ -1,4 +1,3 @@
-import { AddWorkspaceResponse } from './../../../../../vanaheim-shared/src/model/workspace';
 import { DvaModelBuilder } from 'dva-model-creator';
 import { GlobalState } from '@/common/types';
 import {
@@ -8,7 +7,7 @@ import {
   asyncAddWorkspace,
 } from '@/actions/workspace';
 import { listWorkspace, deleteWorkspace, addWorkspace } from '@/service/workspace';
-import { ListWorkspaceResponse } from 'vanaheim-shared';
+import { ListWorkspaceResponse, AddWorkspaceResponse } from 'vanaheim-shared';
 import { message } from 'antd';
 
 const initState: GlobalState['workspace'] = {

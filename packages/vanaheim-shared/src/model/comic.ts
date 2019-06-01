@@ -12,8 +12,18 @@ export interface Comic {
    * 是否阅读
    */
   read: boolean;
+  /**
+   * 团体
+   */
   group: string;
+  /**
+   * 作者
+   */
   artist: string[];
+  /**
+   * 标签
+   */
+  tags: string[];
   /**
    * 文件大小
    */

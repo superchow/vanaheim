@@ -9,6 +9,7 @@ import { parseTitle } from 'vanaheim-shared/lib/common/title';
 export interface ComicFolder {
   dirname: string;
   files: ComicImage[];
+  cover: ComicImage;
   titleInfo: {
     [key: string]: string;
   };
@@ -99,6 +100,7 @@ export default class ComicImporter extends React.PureComponent<
     this.props.onSelect({
       dirname,
       files: sortedFile,
+      cover: sortedFile[0],
       titleInfo: parseTitle(dirname, pattern),
     });
   };
