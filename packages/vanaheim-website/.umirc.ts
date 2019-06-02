@@ -8,6 +8,18 @@ const config: IConfig = {
   alias: {
     common: join(__dirname, './src/common'),
   },
+  proxy: {
+    '/server/api/': {
+      target: 'http://127.0.0.1:7001',
+      changeOrigin: true,
+      pathRewrite: { '^/server/api/': '/api/' },
+    },
+    '/server-static/': {
+      target: 'http://127.0.0.1:7001',
+      changeOrigin: true,
+      pathRewrite: { '^/server-static/': '/static/' },
+    },
+  },
   plugins: [
     // ref: https://umijs.org/plugin/umi-plugin-react.html
     [

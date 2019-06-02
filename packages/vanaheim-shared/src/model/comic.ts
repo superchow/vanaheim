@@ -1,9 +1,11 @@
 import { Parody } from './parody';
+import { BaseResponse } from './../index';
 
 export interface Comic {
+  id: string;
   title: string;
   titleOriginal: string;
-  cover: string;
+  cover: Buffer;
   /**
    * 原作
    */
@@ -32,6 +34,13 @@ export interface Comic {
   modifiedAt: string;
 }
 
+export interface ComicListNode {
+  id: string;
+  title: string;
+  titleOriginal: string;
+  read: boolean;
+}
+
 export interface AddComicFormInfo {
   title: string;
   titleOriginal: string;
@@ -41,3 +50,10 @@ export interface AddComicFormInfo {
   tags: string[];
   workspaceId: string;
 }
+
+export interface GetComicRequestQuery {
+  offset: number;
+  pageSize: number;
+}
+
+export type GetComicRequestResponse = BaseResponse<ComicListNode[]>;

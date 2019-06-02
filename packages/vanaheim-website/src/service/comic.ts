@@ -1,5 +1,6 @@
-import { AddComicFormInfo } from 'vanaheim-shared';
+import { AddComicFormInfo, GetComicRequestQuery } from 'vanaheim-shared';
 import { request } from './index';
+import { stringify } from 'qs';
 
 export function addComic(data: AddComicFormInfo, cover: File, fileList: File[]) {
   const formData = new FormData();
@@ -18,4 +19,8 @@ export function addComic(data: AddComicFormInfo, cover: File, fileList: File[]) 
     data: formData,
     requestType: 'form',
   });
+}
+
+export function getComic(query: GetComicRequestQuery) {
+  return request.get(`v1/comic?${stringify(query)}`);
 }

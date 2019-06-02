@@ -1,3 +1,4 @@
+import { ComicListNode } from './../../../vanaheim-shared/src/model/comic';
 import { WorkspaceWithId } from 'vanaheim-shared';
 import { History } from 'history';
 import { Dispatch } from 'react';
@@ -7,6 +8,7 @@ export interface GlobalState {
   workspace: WorkspaceModel;
   loading: DvaLoadingState;
   workspaceModal: WorkspaceModalModel;
+  comic: ComicModel;
 }
 
 export interface UmiComponentProps {
@@ -26,4 +28,8 @@ export interface WorkspaceModel {
 
 export interface WorkspaceModalModel {
   treeData: TreeNodeNormal[];
+}
+
+export interface ComicModel {
+  list: ComicListNode[];
 }

@@ -31,7 +31,6 @@
     "eslint-config-prettier": "^4.3.0",
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-react": "^7.13.0",
-    "husky": "^2.3.0",
     "lerna": "^3.13.0",
     "lint-staged": "^8.1.7",
     "prettier": "^1.17.1",
@@ -42,12 +41,11 @@
       "path": "node_modules/cz-conventional-changelog"
     }
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
+  "pre-commit": [
+    "lint-staged"
+  ],
   "dependencies": {
+    "pre-commit": "^1.2.2",
     "react-dropzone": "^10.1.5"
   }
 }

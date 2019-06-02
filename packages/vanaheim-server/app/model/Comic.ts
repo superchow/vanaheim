@@ -7,7 +7,7 @@ export default (app: Application) => {
   const comicSchema = new mongoose.Schema({
     title: { type: Schema.Types.String },
     titleOriginal: { type: Schema.Types.String },
-    cover: { type: Schema.Types.String },
+    cover: { type: Schema.Types.Buffer },
     group: { type: Schema.Types.String },
     parody: { type: Schema.Types.Array },
     tags: { type: Schema.Types.Array },

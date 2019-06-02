@@ -1,14 +1,47 @@
 import { Controller } from 'egg';
 import { zip } from 'compressing';
-import { MultipartFileStream } from 'egg-multipart';
 import { AddComicFormInfo } from 'vanaheim-shared/lib/model/comic';
 import * as fs from 'mz/fs';
 import { join } from 'path';
 import * as mongoose from 'mongoose';
 import { promisify } from 'util';
 import { pipeline } from 'stream';
+import { GetComicRequestQuery, GetComicRequestResponse } from 'vanaheim-shared';
 
 export default class ComicController extends Controller {
+  public async list() {
+    const { ctx } = this;
+    const body: GetComicRequestQuery = ctx.query;
+    const response = await this.service.comic.list(body);
+    ctx.body = {
+      data: response.map(({ _id, title, titleOriginal, read }) => ({
+        id: _id,
+        title,
+        titleOriginal,
+        read,
+      })),
+    } as GetComicRequestResponse;
+  }
+
+  public async cover() {
+    const { ctx } = this;
+    const id = ctx.params.id;
+    if (!id) {
+      ctx.status = 404;
+      return;
+    }
+    const comic = await this.service.comic.findById(id);
+    if (!comic) {
+      ctx.status = 401;
+      ctx.body = {
+        message: '漫画不存在',
+      };
+      return;
+    }
+    ctx.set('Content-type', 'image/jpg');
+    ctx.body = comic.cover;
+  }
+
   public async add() {
     const { ctx } = this;
     const parts = ctx.multipart();
@@ -24,7 +57,7 @@ export default class ComicController extends Controller {
           return;
         }
         if (part.fieldname === 'cover') {
-          cover = await toBase64(part);
+          cover = await readStream(part);
         } else {
           tarStream.addEntry(part, {
             relativePath: part.filename,
@@ -54,22 +87,22 @@ export default class ComicController extends Controller {
     await promisify(pipeline)(tarStream, destStream);
     ctx.body = {
       data,
-      image: cover,
     };
   }
 }
 
-const toBase64 = (stream: MultipartFileStream) => {
-  return new Promise(r => {
-    let data = '';
-    let chunk;
-    stream.on('readable', function() {
-      while ((chunk = stream.read()) != null) {
-        data += chunk.toString('base64');
-      }
+function readStream(part: any) {
+  return new Promise((resolve, reject) => {
+    let buffers: any[] = [];
+    part.on('data', chunk => {
+      buffers.push(chunk);
     });
-    stream.on('end', function() {
-      r(`data:${stream.mimeType};base64,${data}`);
+    part.once('end', () => {
+      let buffer = Buffer.concat(buffers);
+      resolve(buffer);
+    });
+    part.once('error', err => {
+      reject(err);
     });
   });
-};
+}
