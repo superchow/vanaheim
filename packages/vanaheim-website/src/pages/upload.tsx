@@ -6,6 +6,7 @@ import { FormComponentProps } from 'antd/lib/form';
 import { GlobalState, UmiComponentProps } from '@/common/types';
 import { connect } from 'dva';
 import { asyncListWorkspace } from '@/actions/workspace';
+import { asyncUploadComic } from '@/actions/upload';
 
 type UploadPageState = {
   comicFolder: ComicFolder | null;
@@ -57,8 +58,13 @@ class UploadPage extends React.PureComponent<PageProps, UploadPageState> {
       if (error) {
         return;
       }
-      const formData = form.getFieldsValue();
-      console.log(formData, comicFolder);
+      this.props.dispatch(
+        asyncUploadComic({
+          info: form.getFieldsValue() as any,
+          cover: comicFolder.cover.file,
+          fileList: comicFolder.files.map(o => o.file),
+        })
+      );
     });
   };
 

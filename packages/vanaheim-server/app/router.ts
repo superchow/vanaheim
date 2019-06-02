@@ -6,4 +6,6 @@ export default (app: Application) => {
   router.get('/api/v1/workspace', controller.workspace.list);
   router.delete('/api/v1/workspace', controller.workspace.delete);
   router.get('/api/v1/workspace/file', controller.workspace.listFile);
+
+  router.post('/api/v1/comic/add', controller.comic.add);
 };

@@ -3,7 +3,7 @@ import { Parody } from './parody';
 export interface Comic {
   title: string;
   titleOriginal: string;
-  coverUrl: string;
+  cover: string;
   /**
    * 原作
    */
@@ -28,4 +28,16 @@ export interface Comic {
    * 文件大小
    */
   fileSize: number;
+  createdAt: string;
+  modifiedAt: string;
+}
+
+export interface AddComicFormInfo {
+  title: string;
+  titleOriginal: string;
+  parody: string[];
+  group: string;
+  artist: string;
+  tags: string[];
+  workspaceId: string;
 }

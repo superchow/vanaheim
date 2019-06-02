@@ -16,6 +16,8 @@
     "declarations": true
   },
   "dependencies": {
+    "@types/pump": "^1.1.0",
+    "compressing": "^1.4.0",
     "dayjs": "^1.8.14",
     "egg": "^2.22.2",
     "egg-cors": "^2.2.0",
@@ -28,6 +30,7 @@
     "moment": "^2.20.1",
     "mongoose": "^5.5.8",
     "mz": "^2.7.0",
+    "pump": "^3.0.0",
     "tsconfig-paths": "^3.7.0",
     "tslib": "^1.8.1",
     "typescript": "^3.0.0",

@@ -1,15 +1,10 @@
+import { request } from './index';
 import {
   AddWorkspaceRequest,
   ListWorkspaceResponse,
   AddWorkspaceResponse,
   ListFileResponse,
 } from 'vanaheim-shared';
-import { extend } from 'umi-request';
-
-const request = extend({
-  maxCache: 10,
-  prefix: 'http://127.0.0.1:7001/api/',
-});
 
 export function addWorkspace(data: AddWorkspaceRequest) {
   return request.post<AddWorkspaceResponse>('v1/workspace', { data });

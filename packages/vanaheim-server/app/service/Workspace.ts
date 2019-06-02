@@ -19,7 +19,7 @@ export default class WorkspaceService extends Service {
     const response = await this.ctx.model.Workspace.find();
     return Promise.all(
       response.map(async ({ name, path, createdAt, modifiedAt, _id: id }) => {
-        const status = await fs.exists(path);
+        const status = path ? await fs.exists(path) : false;
         return {
           id,
           name,
@@ -33,10 +33,15 @@ export default class WorkspaceService extends Service {
   }
 
   async delete(id: string) {
-    const response = await this.ctx.model.Workspace.deleteOne({
+    await this.ctx.model.Workspace.deleteOne({
       _id: id,
     });
-    console.log('delete', response);
+  }
+
+  async getById(id: string) {
+    return this.ctx.model.Workspace.findOne({
+      _id: id,
+    });
   }
 
   async listFile(parent = '/') {
