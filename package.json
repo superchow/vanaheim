@@ -10,7 +10,8 @@
     "dev": "lerna run  --parallel dev --stream",
     "test": "lerna run  --parallel test --stream",
     "test-shared": "lerna run --scope vanaheim-shared test --stream",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "build": "docker build -t diamondyuan/vanaheim ."
   },
   "lint-staged": {
     "**/*.{js,ts,tsx,jsx}": [
