@@ -42,12 +42,25 @@ class BasicLayout extends PureComponent<PageProps> {
           mode="inline"
           selectedKeys={selectedKeys}
           onSelect={this.handleSelectMenu}
+          defaultOpenKeys={menus.map(o => o.name)}
         >
-          {menus.map(({ icon, name, path }) => (
-            <Menu.Item key={path}>
-              <Icon type={icon} />
-              <span>{name}</span>
-            </Menu.Item>
+          {menus.map(({ icon, name, children }) => (
+            <Menu.SubMenu
+              key={name}
+              title={
+                <span>
+                  <Icon type={icon} />
+                  <span>{name}</span>
+                </span>
+              }
+            >
+              {children.map(c => (
+                <Menu.Item key={c.path}>
+                  <Icon type={c.icon} />
+                  <span>{c.name}</span>
+                </Menu.Item>
+              ))}
+            </Menu.SubMenu>
           ))}
         </Menu>
       </Sider>
