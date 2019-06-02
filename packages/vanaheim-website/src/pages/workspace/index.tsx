@@ -55,16 +55,21 @@ class Workspace extends React.PureComponent<PageProps, PageState> {
         title: '名字',
         dataIndex: 'name',
         key: 'name',
+        width: '80px',
       },
       {
         title: '路径',
         dataIndex: 'path',
         key: 'path',
+        render: (text: string) => (
+          <div style={{ wordWrap: 'break-word', wordBreak: 'break-all' }}>{text}</div>
+        ),
       },
       {
         title: '状态',
         dataIndex: 'status',
         key: 'status',
+        width: '80px',
         render: (data: string) =>
           data ? <Badge status="success" text="正常" /> : <Badge status="error" text="异常" />,
       },
