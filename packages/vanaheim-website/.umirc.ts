@@ -34,6 +34,7 @@ const config: IConfig = {
           enable: true,
           default: 'en-US',
         },
+        pwa: {},
         routes: {
           exclude: [
             /models\//,
