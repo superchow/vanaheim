@@ -57,5 +57,15 @@ describe('test parseTitle', () => {
       { year: 'year', title: 'title', author: 'author', group: 'group' },
       parseTitle('(year)[group (author)] title ', pattern)
     );
+
+    assert.deepEqual(
+      { title: 'ハナとテツロウ', group: 'ユースケ' },
+      parseTitle('[ユースケ]ハナとテツロウ（Sample）', pattern)
+    );
+
+    assert.deepEqual(
+      { 原文标题: 'ハナとテツロウ', 作者: 'ユースケ' },
+      parseTitle('[ユースケ]ハナとテツロウ（Sample）', '[作者]原文标题')
+    );
   });
 });

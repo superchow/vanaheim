@@ -69,7 +69,6 @@ class BasicLayout extends PureComponent<PageProps> {
 
   render() {
     const title = pageHeaderInfo[this.props.history.location.pathname];
-
     return (
       <Layout>
         {this.handleRenderSider()}

@@ -7,4 +7,5 @@ export const asyncUploadComic = actionCreator<{
   info: AddComicFormInfo;
   cover: File;
   fileList: File[];
+  callback: Function;
 }>('ASYNC_UPLOAD_COMIC');

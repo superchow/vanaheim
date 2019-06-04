@@ -46,7 +46,7 @@ export interface AddComicFormInfo {
   titleOriginal: string;
   parody: string[];
   group: string;
-  artist: string;
+  artist: string[];
   tags: string[];
   workspaceId: string;
 }

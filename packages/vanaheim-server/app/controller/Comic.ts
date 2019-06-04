@@ -1,6 +1,5 @@
 import { Controller } from 'egg';
 import { zip } from 'compressing';
-import { AddComicFormInfo } from 'vanaheim-shared/lib/model/comic';
 import * as fs from 'mz/fs';
 import { join } from 'path';
 import * as mongoose from 'mongoose';
@@ -9,6 +8,20 @@ import { pipeline } from 'stream';
 import { GetComicRequestQuery, GetComicRequestResponse } from 'vanaheim-shared';
 
 export default class ComicController extends Controller {
+  async artist() {
+    const { ctx } = this;
+    ctx.body = await this.ctx.model.Comic.aggregate([
+      { $project: { _id: 0, artist: 1 } },
+      { $unwind: '$artist' },
+      {
+        $group: {
+          _id: '$artist',
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+  }
+
   public async list() {
     const { ctx } = this;
     const body: GetComicRequestQuery = ctx.query;
@@ -48,7 +61,7 @@ export default class ComicController extends Controller {
     let part;
     const tarStream = new zip.Stream();
     let cover;
-    let data: Partial<AddComicFormInfo> = {};
+    let data: { [key: string]: string } = {};
     while ((part = await parts()) != null) {
       if (part.length) {
         data[part[0]] = part[1];
@@ -65,24 +78,63 @@ export default class ComicController extends Controller {
         }
       }
     }
-    if (!data.workspaceId) {
-      throw new Error('workspaceId is required');
+
+    function arrayStringParser(arrayString: string) {
+      if (!arrayString) {
+        return [];
+      }
+      try {
+        const array = JSON.parse(arrayString);
+        if (Array.isArray(array) && array.every(o => typeof o === 'string')) {
+          return array;
+        }
+        if (typeof array === 'string') {
+          return [array];
+        }
+        return [];
+      } catch (_error) {
+        return [];
+      }
     }
-    const workspace = await this.service.workspace.getById(data.workspaceId);
+    const formInfo = {
+      title: data.title,
+      titleOriginal: data.titleOriginal,
+      group: data.group,
+      artist: arrayStringParser(data.artist),
+      tags: arrayStringParser(data.tags),
+      parody: arrayStringParser(data.parody),
+      workspaceId: data.workspaceId,
+    };
+    const { workspaceId, title, artist } = formInfo;
+    if (!workspaceId) {
+      ctx.data = {
+        message: '请选择仓库',
+      };
+      return;
+    }
+    const workspace = await this.service.workspace.getById(workspaceId);
     if (!workspace || !(await fs.exists(workspace.path))) {
-      throw new Error('仓库不存在');
+      ctx.status = 400;
+      ctx.body = {
+        message: '仓库不存在',
+      };
+      return;
     }
-    if (!data.title || !data.artist) {
-      throw new Error('标题和作者必须存在');
+    if (!title || artist.length === 0) {
+      ctx.status = 400;
+      ctx.body = {
+        message: '标题和作者必须存在',
+      };
+      return;
     }
-    const comic = await this.service.comic.add(data, cover);
+    const comic = await this.service.comic.add(formInfo, cover);
     let id = mongoose.Types.ObjectId(comic._id).toString();
     const comicFolder = join(workspace.path, id);
     if (!(await fs.exists(comicFolder))) {
       await fs.mkdir(comicFolder);
     }
     const destStream = fs.createWriteStream(
-      join(comicFolder, `[${data.artist}] ${data.title}.zip`)
+      join(comicFolder, `[${artist.join(`、`)}] ${data.title}.zip`)
     );
     await promisify(pipeline)(tarStream, destStream);
     ctx.body = {

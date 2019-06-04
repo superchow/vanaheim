@@ -23,10 +23,10 @@ class RecentComic extends React.PureComponent<PageProps, PageState> {
   render() {
     const { list } = this.props.comic;
     return (
-      <div style={{ background: 'white', padding: 20 }}>
-        <Row gutter={20}>
-          {list.map((o, index) => (
-            <Col key={index} xs={12} md={8} lg={6} xl={4}>
+      <div style={{ background: 'white', padding: 24 }}>
+        <Row gutter={20} type="flex">
+          {list.map(o => (
+            <Col key={o.id} xs={12} md={8} lg={6} xl={4}>
               <div
                 className={styles.cover}
                 style={{ backgroundImage: `url(/server-static/cover/${o.id})` }}

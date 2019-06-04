@@ -55,7 +55,7 @@ export default class ComicImporter extends React.PureComponent<
     const firstLayer = Array.from(fileList).map(
       (file): ComicImage | null => {
         let pathArray = (file as any).webkitRelativePath.split('/');
-        if (pathArray.length !== 2 || !/\.(jpg|jpeg|png)$/i.test(pathArray[1])) {
+        if (pathArray.length !== 2 || !/\.(jpg|jpeg|png|gif)$/i.test(pathArray[1])) {
           return null;
         }
         dirname = pathArray[0];

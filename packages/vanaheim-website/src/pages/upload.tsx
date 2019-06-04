@@ -7,19 +7,21 @@ import { GlobalState, UmiComponentProps } from '@/common/types';
 import { connect } from 'dva';
 import { asyncListWorkspace } from '@/actions/workspace';
 import { asyncUploadComic } from '@/actions/upload';
+import { AddComicFormInfo } from 'vanaheim-shared';
+import TagSelect from '@/components/tagSelect';
 
 type UploadPageState = {
   comicFolder: ComicFolder | null;
+  initData: Partial<AddComicFormInfo>;
 };
 
-interface PageOwnProps {}
-
-const mapStateToProps = ({ workspace }: GlobalState) => ({
+const mapStateToProps = ({ workspace, loading }: GlobalState) => ({
   workspace,
+  loading,
 });
 type PageStateProps = ReturnType<typeof mapStateToProps>;
 
-type PageProps = PageStateProps & PageOwnProps & FormComponentProps & UmiComponentProps;
+type PageProps = PageStateProps & FormComponentProps & UmiComponentProps;
 
 const TagMap: {
   [key: string]: string;
@@ -35,6 +37,7 @@ class UploadPage extends React.PureComponent<PageProps, UploadPageState> {
     super(props);
     this.state = {
       comicFolder: null,
+      initData: {},
     };
   }
 
@@ -43,8 +46,13 @@ class UploadPage extends React.PureComponent<PageProps, UploadPageState> {
   }
 
   handleSelect = (comicFolder: ComicFolder | null) => {
+    let initData = {};
+    if (comicFolder) {
+      initData = this.getInitData(comicFolder.titleInfo);
+    }
     this.setState({
       comicFolder: comicFolder,
+      initData,
     });
   };
 
@@ -63,6 +71,7 @@ class UploadPage extends React.PureComponent<PageProps, UploadPageState> {
           info: form.getFieldsValue() as any,
           cover: comicFolder.cover.file,
           fileList: comicFolder.files.map(o => o.file),
+          callback: () => this.handleSelect(null),
         })
       );
     });
@@ -81,24 +90,40 @@ class UploadPage extends React.PureComponent<PageProps, UploadPageState> {
     });
   };
 
+  getInitData(titleInfo: ComicFolder['titleInfo']): Partial<AddComicFormInfo> {
+    const { workspace } = this.props;
+    const foo: ComicFolder['titleInfo'] = {};
+    for (const key in titleInfo) {
+      if (titleInfo.hasOwnProperty(key) && TagMap[key]) {
+        foo[TagMap[key]] = titleInfo[key];
+      }
+    }
+    let { group, title, titleOriginal, parody, artist } = foo;
+    if (titleOriginal && !title) {
+      title = titleOriginal;
+    }
+    let workspaceId;
+    if (workspace.list.length > 0) {
+      workspaceId = workspace.list[0].id;
+    }
+    return {
+      title,
+      titleOriginal,
+      group,
+      artist: artist ? [artist] : [],
+      parody: parody ? [parody] : [],
+      workspaceId,
+    };
+  }
+
   renderComicFolder = () => {
-    const { comicFolder } = this.state;
+    const { comicFolder, initData } = this.state;
     if (!comicFolder) {
       return;
     }
     const { files, cover, dirname } = comicFolder;
-    const { form, workspace } = this.props;
+    const { form, workspace, loading } = this.props;
 
-    const { titleInfo } = comicFolder;
-    const initData: ComicFolder['titleInfo'] = {};
-    for (const key in titleInfo) {
-      if (titleInfo.hasOwnProperty(key) && TagMap[key]) {
-        initData[TagMap[key]] = titleInfo[key];
-      }
-    }
-    if (!initData.title && initData.titleOriginal) {
-      initData.title = initData.titleOriginal;
-    }
     return (
       <React.Fragment>
         <Row style={{ marginBottom: 20 }} gutter={20}>
@@ -116,6 +141,7 @@ class UploadPage extends React.PureComponent<PageProps, UploadPageState> {
               <Form.Item label="标题">
                 {form.getFieldDecorator('title', {
                   initialValue: initData.title,
+                  rules: [{ required: true, message: '请输入标题' }],
                 })(<Input placeholder="请输入标题" />)}
               </Form.Item>
               <Form.Item label="团体">
@@ -126,6 +152,7 @@ class UploadPage extends React.PureComponent<PageProps, UploadPageState> {
               <Form.Item label="作者">
                 {form.getFieldDecorator('artist', {
                   initialValue: initData.artist,
+                  rules: [{ required: true, message: '请输入作者' }],
                 })(
                   <Select
                     mode="tags"
@@ -145,17 +172,10 @@ class UploadPage extends React.PureComponent<PageProps, UploadPageState> {
                   />
                 )}
               </Form.Item>
-              <Form.Item label="标签">
-                {form.getFieldDecorator('tags')(
-                  <Select
-                    mode="tags"
-                    placeholder="请输入标签"
-                    dropdownMenuStyle={{ display: 'none' }}
-                  />
-                )}
-              </Form.Item>
+              <Form.Item label="标签">{form.getFieldDecorator('tags')(<TagSelect />)}</Form.Item>
               <Form.Item label="仓库">
                 {form.getFieldDecorator('workspaceId', {
+                  initialValue: initData.workspaceId,
                   rules: [{ required: true, message: '请选择仓库' }],
                 })(
                   <Select placeholder="请选择仓库">
@@ -170,12 +190,22 @@ class UploadPage extends React.PureComponent<PageProps, UploadPageState> {
               <Form.Item wrapperCol={{ offset: 5, span: 19 }}>
                 <Row gutter={20}>
                   <Col span={12}>
-                    <Button type="primary" block onClick={this.handleUploadComic}>
+                    <Button
+                      type="primary"
+                      block
+                      onClick={this.handleUploadComic}
+                      loading={loading.effects[asyncUploadComic.type]}
+                    >
                       导入
                     </Button>
                   </Col>
                   <Col span={12}>
-                    <Button type="danger" block onClick={() => this.handleSelect(null)}>
+                    <Button
+                      disabled={loading.effects[asyncUploadComic.type]}
+                      type="danger"
+                      block
+                      onClick={() => this.handleSelect(null)}
+                    >
                       取消导入
                     </Button>
                   </Col>
@@ -213,6 +243,4 @@ class UploadPage extends React.PureComponent<PageProps, UploadPageState> {
   }
 }
 
-export default Form.create<PageOwnProps & FormComponentProps>()(
-  connect(mapStateToProps)(UploadPage)
-);
+export default Form.create<FormComponentProps>()(connect(mapStateToProps)(UploadPage));

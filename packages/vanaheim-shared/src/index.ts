@@ -6,3 +6,4 @@ export interface BaseResponse<T> {
 export * from './model/workspace';
 export * from './model/parody';
 export * from './model/comic';
+export * from './model/database';

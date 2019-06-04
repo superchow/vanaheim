@@ -19,7 +19,25 @@ function includeBrackets(char: string) {
   return brackets.split('').some(o => char.includes(o));
 }
 
+function toCDB(str) {
+  let tmp = '';
+  for (let i = 0; i < str.length; i++) {
+    if (str.charCodeAt(i) === 12288) {
+      tmp += String.fromCharCode(str.charCodeAt(i) - 12256);
+      continue;
+    }
+    if (str.charCodeAt(i) > 65280 && str.charCodeAt(i) < 65375) {
+      tmp += String.fromCharCode(str.charCodeAt(i) - 65248);
+    } else {
+      tmp += String.fromCharCode(str.charCodeAt(i));
+    }
+  }
+  return tmp;
+}
+
 export function parsePattern(input: string): Pattern[] {
+  // eslint-disable-next-line no-param-reassign
+  input = toCDB(input);
   let result: Pattern[] = [];
   let bracketStack: string[] = [];
   let tempValue = '';

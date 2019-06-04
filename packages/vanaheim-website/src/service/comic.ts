@@ -7,15 +7,22 @@ export function addComic(data: AddComicFormInfo, cover: File, fileList: File[]) 
   formData.append('title', data.title);
   formData.append('titleOriginal', data.titleOriginal);
   formData.append('group', data.group);
-  formData.append('parody', JSON.stringify(data.parody));
-  formData.append('artist', JSON.stringify(data.artist));
-  formData.append('tags', JSON.stringify(data.tags));
+  const { artist, tags, parody } = data;
+  if (parody && parody.length > 0) {
+    formData.append('parody', JSON.stringify(parody));
+  }
+  if (artist && artist.length > 0) {
+    formData.append('artist', JSON.stringify(artist));
+  }
+  if (tags && tags.length > 0) {
+    formData.append('tags', JSON.stringify(tags));
+  }
   formData.append('workspaceId', data.workspaceId);
   formData.append('cover', cover);
   fileList.forEach((file, index) => {
     formData.append(`file_${index}`, file, file.name);
   });
-  request.post('v1/comic/add', {
+  return request.post('v1/comic/add', {
     data: formData,
     requestType: 'form',
   });
