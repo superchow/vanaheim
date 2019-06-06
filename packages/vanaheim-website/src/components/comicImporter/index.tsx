@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon, Button, Radio, Row, Col, Form, Input } from 'antd';
+import { Icon, Button, Radio, Row, Col, Form, Input, message } from 'antd';
 import Dropzone, { DropzoneState } from 'react-dropzone';
 import style from './index.scss';
 import Upload from '@/components/upload';
@@ -91,6 +91,10 @@ export default class ComicImporter extends React.PureComponent<
   };
 
   handleSelect = (files: Array<ComicImage | null>, dirname: string) => {
+    if (files.length === 0 || !dirname) {
+      message.error('不要上传空文件夹');
+      return;
+    }
     const sortedFile = files
       .filter((o): o is ComicImage => !!o)
       .sort((a, b) => a.file.name.localeCompare(b.file.name));

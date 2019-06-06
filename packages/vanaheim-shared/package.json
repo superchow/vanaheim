@@ -16,15 +16,16 @@
     "typescript": true
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.133",
     "@types/mocha": "^5.2.6",
     "@types/node": "^8.5.2",
     "@types/power-assert": "^1.4.29",
     "egg-bin": "^4.13.0",
     "mocha": "^4.1.0",
-    "urllib": "^2.34.0",
-    "@types/lodash": "^4.14.133"
+    "urllib": "^2.34.0"
   },
   "dependencies": {
+    "immutability-helper": "^3.0.0",
     "lodash": "^4.17.11"
   }
 }

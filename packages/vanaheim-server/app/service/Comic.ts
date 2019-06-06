@@ -20,4 +20,18 @@ export default class ComicService extends Service {
       _id: id,
     });
   }
+
+  async countTags(type: string) {
+    const response = await this.ctx.model.Comic.aggregate([
+      { $project: { _id: 0, [type]: 1 } },
+      { $unwind: `$${type}` },
+      {
+        $group: {
+          _id: `$${type}`,
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+    return response.map(({ _id: id, count }) => ({ id, count }));
+  }
 }

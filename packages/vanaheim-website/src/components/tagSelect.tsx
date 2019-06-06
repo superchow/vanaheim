@@ -1,6 +1,6 @@
 import { Select } from 'antd';
 import React from 'react';
-import { tags, Tag } from '@/common/database';
+import { Tag } from '@/common/database';
 import { debounce } from 'lodash';
 
 interface State {
@@ -8,12 +8,14 @@ interface State {
 }
 
 interface Props {
+  multiple?: boolean;
+  tags: Tag[];
   value?: string;
   onChange?: (e: string) => any;
 }
 
 export default class TagSelect extends React.Component<Props, State> {
-  constructor(props: any) {
+  constructor(props: Props) {
     super(props);
     this.state = {};
     this.searchTag = debounce(this.searchTag, 300);
@@ -27,6 +29,7 @@ export default class TagSelect extends React.Component<Props, State> {
   };
 
   searchTag = async (value: string) => {
+    const { tags } = this.props;
     const lowValue = value.toLowerCase();
     this.setState({
       stateTags: tags.filter(({ key, name }) => key.includes(lowValue) || name.includes(lowValue)),
@@ -34,6 +37,7 @@ export default class TagSelect extends React.Component<Props, State> {
   };
 
   handleSearch = (value: string) => {
+    const { tags } = this.props;
     if (!value) {
       this.setState({
         stateTags: tags,
@@ -44,15 +48,16 @@ export default class TagSelect extends React.Component<Props, State> {
   };
 
   render() {
+    const { tags, multiple } = this.props;
     const renderList = this.state.stateTags ? this.state.stateTags : tags;
     return (
       <Select
         onSearch={e => this.handleSearch(e)}
         value={this.props.value}
-        mode="tags"
-        placeholder="请输入标签"
+        mode={multiple ? 'tags' : 'default'}
         onChange={this.handleChange}
         filterOption={false}
+        placeholder="输入中英文筛选"
         showSearch
       >
         {renderList

@@ -6,6 +6,9 @@ export interface Comic {
   title: string;
   titleOriginal: string;
   cover: Buffer;
+  rate: number;
+  reclass: string;
+  character: string[];
   /**
    * 原作
    */
@@ -48,6 +51,9 @@ export interface AddComicFormInfo {
   group: string;
   artist: string[];
   tags: string[];
+  rate: number;
+  reclass: string;
+  character: string[];
   workspaceId: string;
 }
 
@@ -57,3 +63,7 @@ export interface GetComicRequestQuery {
 }
 
 export type GetComicRequestResponse = BaseResponse<ComicListNode[]>;
+
+export interface GetComicTagsQuery {
+  type: string;
+}

@@ -3,17 +3,25 @@ import { WorkspaceWithId } from 'vanaheim-shared';
 import { History } from 'history';
 import { Dispatch } from 'react';
 import { TreeNodeNormal } from 'antd/lib/tree-select/interface';
+import { ComicRawInfo } from 'vanaheim-shared/src';
 
 export interface GlobalState {
   workspace: WorkspaceModel;
   loading: DvaLoadingState;
   workspaceModal: WorkspaceModalModel;
   comic: ComicModel;
+  upload: UploadModel;
 }
 
 export interface UmiComponentProps {
   history: History;
   dispatch: Dispatch<any>;
+}
+
+export interface UploadModel {
+  comicInfo: {
+    [type: string]: ComicRawInfo[];
+  };
 }
 
 export interface DvaLoadingState {

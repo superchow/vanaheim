@@ -15,11 +15,16 @@ export default function() {
       origin: '*',
       allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH',
     },
+    bodyParser: {
+      jsonLimit: '500mb',
+      formLimit: '600mb',
+    },
     multipart: {
       mode: 'stream',
       autoFields: false,
       defaultCharset: 'utf8',
       fieldNameSize: 100,
+      fields: 100,
       fieldSize: '100mb',
       fileSize: '1000mb',
       files: 1000,

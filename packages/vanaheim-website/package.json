@@ -13,6 +13,7 @@
     "dva": "^2.5.0-beta.2",
     "dva-logger": "^1.0.0",
     "dva-model-creator": "^0.0.4",
+    "immutability-helper": "^3.0.0",
     "lodash": "^4.17.11",
     "lodash-decorators": "^6.0.1",
     "qs": "^6.7.0",

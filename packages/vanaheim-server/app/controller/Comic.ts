@@ -1,3 +1,4 @@
+import { GetComicTagsQuery } from './../../../vanaheim-shared/src/model/comic';
 import { Controller } from 'egg';
 import { zip } from 'compressing';
 import * as fs from 'mz/fs';
@@ -8,18 +9,19 @@ import { pipeline } from 'stream';
 import { GetComicRequestQuery, GetComicRequestResponse } from 'vanaheim-shared';
 
 export default class ComicController extends Controller {
-  async artist() {
+  async tags() {
     const { ctx } = this;
-    ctx.body = await this.ctx.model.Comic.aggregate([
-      { $project: { _id: 0, artist: 1 } },
-      { $unwind: '$artist' },
-      {
-        $group: {
-          _id: '$artist',
-          count: { $sum: 1 },
-        },
-      },
-    ]);
+    const query: GetComicTagsQuery = ctx.query;
+    const supportTagType = ['tags', 'artist', 'parody', 'group', 'character', 'reclass'];
+    const { type } = query;
+    if (!query.type || supportTagType.every(tag => tag !== query.type)) {
+      ctx.status = 401;
+      ctx.body = { message: '不支持的 tag 类型' };
+      return;
+    }
+    ctx.body = {
+      data: await this.service.comic.countTags(type),
+    };
   }
 
   public async list() {
@@ -103,7 +105,10 @@ export default class ComicController extends Controller {
       artist: arrayStringParser(data.artist),
       tags: arrayStringParser(data.tags),
       parody: arrayStringParser(data.parody),
+      character: arrayStringParser(data.character),
       workspaceId: data.workspaceId,
+      reclass: data.reclass,
+      rate: parseInt(data.rate, 10),
     };
     const { workspaceId, title, artist } = formInfo;
     if (!workspaceId) {
@@ -136,7 +141,7 @@ export default class ComicController extends Controller {
     const destStream = fs.createWriteStream(
       join(comicFolder, `[${artist.join(`、`)}] ${data.title}.zip`)
     );
-    await promisify(pipeline)(tarStream, destStream);
+    await promisify(pipeline)(tarStream as any, destStream);
     ctx.body = {
       data,
     };

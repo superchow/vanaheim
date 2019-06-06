@@ -7,3 +7,4 @@ export * from './model/workspace';
 export * from './model/parody';
 export * from './model/comic';
 export * from './model/database';
+export * from './model/site';

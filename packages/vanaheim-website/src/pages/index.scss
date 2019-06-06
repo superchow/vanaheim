@@ -5,7 +5,30 @@
   background-position: center;
   background-size: 100% auto;
   background-color: bisque;
+  position: relative;
 }
 .fileSelect {
   margin-bottom: 24px;
+}
+
+.previewItem {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  .previewItemActions {
+    cursor: pointer;
+    font-size: 24px;
+    padding: 8px;
+  }
+}
+.previewItem:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0.8;
 }
