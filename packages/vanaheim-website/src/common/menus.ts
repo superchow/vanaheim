@@ -1,3 +1,23 @@
+export interface MenuNode {
+  name: string;
+  icon: string;
+  path: string;
+}
+export interface SubMenu {
+  name: string;
+  icon: string;
+  children: (SubMenu | MenuNode)[];
+}
+
+export type Menu = MenuNode | SubMenu;
+
+export function isSubMenu(menu: Menu): menu is SubMenu {
+  if ((menu as SubMenu).children) {
+    return true;
+  }
+  return false;
+}
+
 export default [
   {
     name: '漫画',
@@ -10,8 +30,14 @@ export default [
       },
       {
         name: '标签',
-        icon: 'calendar',
-        path: '/comic/tags',
+        icon: 'tags',
+        children: [
+          {
+            name: '全部',
+            icon: 'tags',
+            path: '/comic/tags',
+          },
+        ],
       },
     ],
   },

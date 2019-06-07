@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Layout, Menu, Icon, PageHeader } from 'antd';
-import menus from 'common/menus';
+import menus, { Menu as IMenu, isSubMenu } from 'common/menus';
 import { connect } from 'dva';
 import { GlobalState, UmiComponentProps } from '@/common/types';
 import { SelectParam } from 'antd/lib/menu';
@@ -26,6 +26,30 @@ class BasicLayout extends PureComponent<PageProps> {
     this.props.history.push(e.key);
   };
 
+  renderMenu = (menu: IMenu) => {
+    if (isSubMenu(menu)) {
+      return (
+        <Menu.SubMenu
+          key={menu.name}
+          title={
+            <span>
+              <Icon type={menu.icon} />
+              <span>{menu.name}</span>
+            </span>
+          }
+        >
+          {menu.children.map(c => this.renderMenu(c))}
+        </Menu.SubMenu>
+      );
+    }
+    return (
+      <Menu.Item key={menu.path}>
+        <Icon type={menu.icon} />
+        <span>{menu.name}</span>
+      </Menu.Item>
+    );
+  };
+
   handleRenderSider = () => {
     const { history } = this.props;
     let selectedKeys: string[] = [history.location.pathname];
@@ -44,24 +68,7 @@ class BasicLayout extends PureComponent<PageProps> {
           onSelect={this.handleSelectMenu}
           defaultOpenKeys={menus.map(o => o.name)}
         >
-          {menus.map(({ icon, name, children }) => (
-            <Menu.SubMenu
-              key={name}
-              title={
-                <span>
-                  <Icon type={icon} />
-                  <span>{name}</span>
-                </span>
-              }
-            >
-              {children.map(c => (
-                <Menu.Item key={c.path}>
-                  <Icon type={c.icon} />
-                  <span>{c.name}</span>
-                </Menu.Item>
-              ))}
-            </Menu.SubMenu>
-          ))}
+          {menus.map(o => this.renderMenu(o))}
         </Menu>
       </Sider>
     );
