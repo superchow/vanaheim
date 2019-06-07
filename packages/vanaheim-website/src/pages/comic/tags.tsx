@@ -39,7 +39,6 @@ class TagsPage extends Component<PageProps, PageState> {
     dispatch(
       asyncGetComic({
         offset: 0,
-        pageSize: 10,
       })
     );
   };
@@ -115,7 +114,12 @@ class TagsPage extends Component<PageProps, PageState> {
 
 const WarpForm = Form.create<PageProps>({
   onValuesChange({ dispatch }: PageProps, __, allValues) {
-    dispatch(asyncGetComic(allValues));
+    dispatch(
+      asyncGetComic({
+        ...allValues,
+        offset: 0,
+      })
+    );
   },
 })(TagsPage);
 

@@ -15,7 +15,6 @@ class RecentComic extends React.PureComponent<PageProps, PageState> {
     this.props.dispatch(
       asyncGetComic({
         offset: 0,
-        pageSize: 0,
       })
     );
   }

@@ -34,7 +34,7 @@ export default class ComicController extends Controller {
 
   public async list() {
     const { ctx } = this;
-    const body: GetComicRequestQuery = ctx.query;
+    const body: GetComicRequestQuery = ctx.request.body;
     const response = await this.service.comic.list(body);
     ctx.body = {
       data: response.map(({ _id, title, titleOriginal, read }) => ({

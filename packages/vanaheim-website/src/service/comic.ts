@@ -47,8 +47,10 @@ export function addComic(data: AddComicFormInfo, cover: File, fileList: File[]) 
   });
 }
 
-export function getComic(query: GetComicRequestQuery) {
-  return request.get(`v1/comic?${stringify(query)}`);
+export function getComic(body: GetComicRequestQuery) {
+  return request.post(`v1/comic`, {
+    data: body,
+  });
 }
 
 export function getComicTags(query: GetComicTagsQuery) {

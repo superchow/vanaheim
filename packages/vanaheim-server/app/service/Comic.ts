@@ -11,8 +11,22 @@ export default class ComicService extends Service {
     });
   }
 
-  async list(_query: GetComicRequestQuery) {
-    return this.ctx.model.Comic.find({}, 'title titleOriginal read');
+  async list(query: GetComicRequestQuery) {
+    const { offset } = query;
+    const comicQuery = this.ctx.model.Comic.find({}, 'title titleOriginal read');
+    comicQuery.skip(offset);
+    comicQuery.limit(20);
+    ['tags', 'artist', 'parody', 'group', 'character', 'reclass', 'workspaceId'].forEach(key => {
+      const data = query[key];
+      if (Array.isArray(data) && data.length > 0) {
+        comicQuery.find({
+          [key]: {
+            $in: data,
+          },
+        });
+      }
+    });
+    return comicQuery.exec();
   }
 
   async findById(id: string) {

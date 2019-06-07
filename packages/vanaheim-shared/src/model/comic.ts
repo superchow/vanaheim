@@ -58,8 +58,14 @@ export interface AddComicFormInfo {
 }
 
 export interface GetComicRequestQuery {
+  tags?: string[];
+  artist?: string[];
+  parody?: string[];
+  reclass?: string[];
+  character?: string[];
+  group?: string[];
+  workspaceId?: string[];
   offset: number;
-  pageSize: number;
 }
 
 export type GetComicRequestResponse = BaseResponse<ComicListNode[]>;
