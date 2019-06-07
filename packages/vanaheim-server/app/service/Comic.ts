@@ -32,6 +32,7 @@ export default class ComicService extends Service {
         },
       },
     ]);
+    console.log(await this.ctx.model.Comic.aggregate([{ $project: { _id: 0, [type]: 1 } }]));
     return response.map(({ _id: id, count }) => ({ id, count }));
   }
 }

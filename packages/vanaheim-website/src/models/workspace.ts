@@ -9,6 +9,7 @@ import {
 import { listWorkspace, deleteWorkspace, addWorkspace } from '@/service/workspace';
 import { ListWorkspaceResponse, AddWorkspaceResponse } from 'vanaheim-shared';
 import { message } from 'antd';
+import { Dispatch } from 'react';
 
 const initState: GlobalState['workspace'] = {
   list: [],
@@ -47,4 +48,10 @@ builder.case(setWorkspace, (state, payload) => {
   };
 });
 
-export default builder.build();
+export default Object.assign(builder.build(), {
+  subscriptions: {
+    loadWorkspace({ dispatch }: { dispatch: Dispatch<any> }) {
+      dispatch(asyncListWorkspace());
+    },
+  },
+});

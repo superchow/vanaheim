@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "antd": "^3.15.0",
+    "classnames": "^2.2.6",
     "dayjs": "^1.8.14",
     "dva": "^2.5.0-beta.2",
     "dva-logger": "^1.0.0",
@@ -22,6 +23,7 @@
     "umi-request": "^1.0.7"
   },
   "devDependencies": {
+    "@types/classnames": "^2.2.8",
     "@types/jest": "^23.3.12",
     "@types/lodash": "^4.14.133",
     "@types/qs": "^6.5.3",

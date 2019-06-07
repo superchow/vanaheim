@@ -1,25 +1,48 @@
-import { setList } from './../../actions/comic';
 import { DvaModelBuilder } from 'dva-model-creator';
 import { GlobalState } from '@/common/types';
-import { asyncGetComic } from '@/actions/comic';
-import { getComic } from '@/service/comic';
-import { GetComicRequestResponse } from 'vanaheim-shared/src';
-import { message } from 'antd';
+import { asyncGetComic, setList, asyncFetchTags } from '@/actions/comic';
+import { getComic, getComicTags } from '@/service/comic';
+import { GetComicRequestResponse, GetComicTagsResponse } from 'vanaheim-shared';
+import update from 'immutability-helper';
 
 const initState: GlobalState['comic'] = {
   list: [],
+  tags: {},
 };
 
 const builder = new DvaModelBuilder(initState, 'comic');
 
 builder.takeEvery(asyncGetComic, function*(query, { call, put }) {
   const response: GetComicRequestResponse = yield call(getComic, query);
-  if (response.message) {
-    message.error(message);
+  if (!response) {
     return;
   }
   yield put(setList(response.data));
 });
+
+builder.takeEvery(asyncFetchTags.started, function*(query, { call, put }) {
+  const response: GetComicTagsResponse = yield call(getComicTags, query);
+  if (!response) {
+    return;
+  }
+  yield put(
+    asyncFetchTags.done({
+      params: query,
+      result: {
+        tags: response.data,
+      },
+    })
+  );
+});
+builder.case(asyncFetchTags.done, (state, { params, result }) =>
+  update(state, {
+    tags: {
+      [params.type]: {
+        $set: result.tags,
+      },
+    },
+  })
+);
 
 builder.case(setList, (state, list) => ({
   ...state,

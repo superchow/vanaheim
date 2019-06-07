@@ -1,3 +1,4 @@
+import { GetComicTagsQuery } from './../../../vanaheim-shared/src/model/comic';
 import { SearchComicRawInfoRequest } from 'vanaheim-shared/src';
 import { AddComicFormInfo, GetComicRequestQuery } from 'vanaheim-shared';
 import { request } from './index';
@@ -48,6 +49,10 @@ export function addComic(data: AddComicFormInfo, cover: File, fileList: File[]) 
 
 export function getComic(query: GetComicRequestQuery) {
   return request.get(`v1/comic?${stringify(query)}`);
+}
+
+export function getComicTags(query: GetComicTagsQuery) {
+  return request.get(`v1/comic/tags?${stringify(query)}`);
 }
 
 export function searchComicRawInfo(query: SearchComicRawInfoRequest) {

@@ -4,8 +4,8 @@ import db from 'vanaheim-shared/data/db.raw.json';
 export interface Tag {
   key: string;
   name: string;
-  intro: string;
-  links: string;
+  intro?: string;
+  links?: string;
 }
 
 const database: Database = db;
@@ -53,3 +53,23 @@ export const groupTags = Array.from(groupTagsTagsSet.values());
 
 export const languageTagsSet = getTagData(['language']);
 export const languageTags = Array.from(languageTagsSet.values());
+
+export const getTagName = (map: Map<string, Tag>, key: string) => {
+  const tag = map.get(key);
+  if (tag) {
+    return tag.name;
+  }
+  return key;
+};
+
+export const tagInfoMap: {
+  [key: string]: { label: string; map: any };
+} = {
+  group: { label: '团体', map: groupTagsTagsSet },
+  tags: { label: '标签', map: tagsSet },
+  artist: { label: '画师', map: artistTagsTagsSet },
+  parody: { label: '原著', map: parodyTagsTagsSet },
+  character: { label: '角色', map: characterTagsTagsSet },
+  reclass: { label: '类别', map: reclassTagsSet },
+  workspaceId: { label: '仓库', map: reclassTagsSet },
+};

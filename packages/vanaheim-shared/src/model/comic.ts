@@ -64,6 +64,22 @@ export interface GetComicRequestQuery {
 
 export type GetComicRequestResponse = BaseResponse<ComicListNode[]>;
 
+export type TagType =
+  | 'tags'
+  | 'artist'
+  | 'group'
+  | 'parody'
+  | 'character'
+  | 'reclass'
+  | 'workspaceId';
+
 export interface GetComicTagsQuery {
-  type: string;
+  type: TagType;
 }
+
+export interface ComicTags {
+  id: string;
+  count: number;
+}
+
+export type GetComicTagsResponse = BaseResponse<ComicTags[]>;

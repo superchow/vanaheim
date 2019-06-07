@@ -8,6 +8,11 @@ export default [
         icon: 'calendar',
         path: '/comic/recent',
       },
+      {
+        name: '标签',
+        icon: 'calendar',
+        path: '/comic/tags',
+      },
     ],
   },
   {

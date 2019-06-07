@@ -12,7 +12,15 @@ export default class ComicController extends Controller {
   async tags() {
     const { ctx } = this;
     const query: GetComicTagsQuery = ctx.query;
-    const supportTagType = ['tags', 'artist', 'parody', 'group', 'character', 'reclass'];
+    const supportTagType = [
+      'tags',
+      'artist',
+      'parody',
+      'group',
+      'character',
+      'reclass',
+      'workspaceId',
+    ];
     const { type } = query;
     if (!query.type || supportTagType.every(tag => tag !== query.type)) {
       ctx.status = 401;
