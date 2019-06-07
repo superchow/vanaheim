@@ -44,9 +44,12 @@ builder.case(asyncFetchTags.done, (state, { params, result }) =>
   })
 );
 
-builder.case(setList, (state, list) => ({
-  ...state,
-  list,
-}));
+builder.case(setList, (state, list) =>
+  update(state, {
+    list: {
+      $set: list,
+    },
+  })
+);
 
 export default builder.build();

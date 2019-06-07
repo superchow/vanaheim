@@ -374,10 +374,6 @@ class UploadPage extends React.PureComponent<PageProps, UploadPageState> {
 
   render() {
     const { comicFolder } = this.state;
-    console.log(this.props.loading.effects[asyncSearchComic.type]);
-    console.log(this.props.loading.effects[asyncSearchComic.type]);
-    console.log(this.props.loading.effects[asyncSearchComic.type]);
-
     return (
       <div>
         {!comicFolder ? (

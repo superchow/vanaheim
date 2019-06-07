@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import { GlobalState, UmiComponentProps } from '@/common/types';
-import { asyncGetComic } from '@/actions/comic';
+import { asyncGetComic, setList } from '@/actions/comic';
 import { Col, Row } from 'antd';
 import styles from './recent.scss';
 
@@ -19,6 +19,10 @@ class RecentComic extends React.PureComponent<PageProps, PageState> {
       })
     );
   }
+
+  componentWillUnmount = () => {
+    this.props.dispatch(setList([]));
+  };
 
   render() {
     const { list } = this.props.comic;
