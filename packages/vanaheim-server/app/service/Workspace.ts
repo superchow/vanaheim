@@ -42,10 +42,14 @@ export default class WorkspaceService extends Service {
     });
     if (workspace) {
       if (await fs.exists(workspace.path)) {
-        const files = await fs.readdir(workspace.path);
+        const files = (await fs.readdir(workspace.path)).filter(o => o !== '.DS_Store');
         if (files.length !== 0) {
           throw new Error('删除失败，仓库不为空');
         }
+        if (files.length === 0) {
+          await fs.unlink(join(workspace.path, '.DS_Store'));
+        }
+        await fs.rmdir(workspace.path);
       }
     }
     await this.ctx.model.Workspace.deleteOne({

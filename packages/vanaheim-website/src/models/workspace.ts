@@ -8,7 +8,6 @@ import {
 } from '@/actions/workspace';
 import { listWorkspace, deleteWorkspace, addWorkspace } from '@/service/workspace';
 import { ListWorkspaceResponse, AddWorkspaceResponse } from 'vanaheim-shared';
-import { message } from 'antd';
 import { Dispatch } from 'react';
 
 const initState: GlobalState['workspace'] = {
@@ -24,8 +23,7 @@ builder.takeEvery(asyncListWorkspace, function*(_, { call, put }) {
 
 builder.takeEvery(asyncDeleteWorkspace, function*({ id }, { call, put }) {
   const response = yield call(deleteWorkspace, id);
-  if (response.message) {
-    message.error(message);
+  if (!response) {
     return;
   }
   yield put(asyncListWorkspace());
@@ -33,8 +31,7 @@ builder.takeEvery(asyncDeleteWorkspace, function*({ id }, { call, put }) {
 
 builder.takeEvery(asyncAddWorkspace, function*({ name, path, callback }, { call, put }) {
   const response: AddWorkspaceResponse = yield call(addWorkspace, { name, path });
-  if (response.message) {
-    message.error(message);
+  if (!response) {
     return;
   }
   callback();
