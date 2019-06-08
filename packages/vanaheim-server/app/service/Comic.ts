@@ -15,7 +15,7 @@ export default class ComicService extends Service {
     const { offset } = query;
     const comicQuery = this.ctx.model.Comic.find({}, 'title titleOriginal read');
     comicQuery.skip(offset);
-    comicQuery.limit(20);
+    comicQuery.limit(24);
     ['tags', 'artist', 'parody', 'group', 'character', 'reclass', 'workspaceId'].forEach(key => {
       const data = query[key];
       if (Array.isArray(data) && data.length > 0) {
@@ -31,6 +31,12 @@ export default class ComicService extends Service {
 
   async findById(id: string) {
     return this.ctx.model.Comic.findOne({
+      _id: id,
+    });
+  }
+
+  async deleteById(id: string) {
+    return this.ctx.model.Comic.deleteOne({
       _id: id,
     });
   }

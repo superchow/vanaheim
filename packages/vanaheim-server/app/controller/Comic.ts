@@ -46,6 +46,22 @@ export default class ComicController extends Controller {
     } as GetComicRequestResponse;
   }
 
+  public async delete() {
+    const { ctx } = this;
+    const {
+      params: { id },
+    } = ctx;
+    if (!id) {
+      ctx.status = 401;
+      ctx.body = {
+        message: '参数错误，缺少 ID',
+      };
+      return;
+    }
+    await this.service.comic.deleteById(id);
+    ctx.status = 201;
+  }
+
   public async cover() {
     const { ctx } = this;
     const id = ctx.params.id;

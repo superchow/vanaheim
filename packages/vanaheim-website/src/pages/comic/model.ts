@@ -1,7 +1,7 @@
 import { DvaModelBuilder } from 'dva-model-creator';
 import { GlobalState } from '@/common/types';
-import { asyncGetComic, setList, asyncFetchTags } from '@/actions/comic';
-import { getComic, getComicTags } from '@/service/comic';
+import { asyncGetComic, setList, asyncFetchTags, asyncDeleteComic } from '@/actions/comic';
+import { getComic, getComicTags, deleteComicById } from '@/service/comic';
 import { GetComicRequestResponse, GetComicTagsResponse } from 'vanaheim-shared';
 import update from 'immutability-helper';
 
@@ -11,6 +11,14 @@ const initState: GlobalState['comic'] = {
 };
 
 const builder = new DvaModelBuilder(initState, 'comic');
+
+builder.takeEvery(asyncDeleteComic, function*(id, { call }) {
+  const response: GetComicRequestResponse = yield call(deleteComicById, id);
+  if (!response) {
+    return;
+  }
+  console.log(response);
+});
 
 builder.takeEvery(asyncGetComic, function*(query, { call, put }) {
   const response: GetComicRequestResponse = yield call(getComic, query);
@@ -34,6 +42,7 @@ builder.takeEvery(asyncFetchTags.started, function*(query, { call, put }) {
     })
   );
 });
+
 builder.case(asyncFetchTags.done, (state, { params, result }) =>
   update(state, {
     tags: {

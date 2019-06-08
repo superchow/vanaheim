@@ -11,3 +11,5 @@ export const setList = actionCreator<ComicListNode[]>('SET_LIST');
 export const asyncFetchTags = actionCreator.async<GetComicTagsQuery, { tags: ComicTags[] }>(
   'ASYNC_FETCH_TAGS'
 );
+
+export const asyncDeleteComic = actionCreator<string>('asyncDeleteComic');

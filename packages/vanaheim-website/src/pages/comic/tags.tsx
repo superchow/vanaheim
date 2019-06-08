@@ -3,10 +3,10 @@ import React, { Component } from 'react';
 import TagSelector from '@/components/TagSelector';
 import StandardFormRow from '@/components/StandardFormRow';
 import { FormComponentProps } from 'antd/es/form';
-import { Card, Form, Row, Col } from 'antd';
+import { Card, Form, Row, Col, Dropdown, Menu, Icon } from 'antd';
 import { UmiComponentProps, GlobalState } from '@/common/types';
 import { connect } from 'dva';
-import { asyncFetchTags, asyncGetComic, setList } from '@/actions/comic';
+import { asyncFetchTags, asyncGetComic, setList, asyncDeleteComic } from '@/actions/comic';
 import { getTagName, tagInfoMap, Tag } from '@/common/database';
 import { TagType } from 'vanaheim-shared';
 import styles from './recent.scss';
@@ -86,6 +86,10 @@ class TagsPage extends Component<PageProps, PageState> {
     );
   };
 
+  handleDeleteComic = (id: string) => {
+    this.props.dispatch(asyncDeleteComic(id));
+  };
+
   render() {
     const { tags } = this.state;
     const { comic } = this.props;
@@ -98,10 +102,27 @@ class TagsPage extends Component<PageProps, PageState> {
           <Row gutter={20} type="flex">
             {comic.list.map(o => (
               <Col key={o.id} xs={12} md={8} lg={6} xl={4}>
-                <div
-                  className={styles.cover}
-                  style={{ backgroundImage: `url(/server-static/cover/${o.id})` }}
-                />
+                <Dropdown
+                  overlay={
+                    <Menu>
+                      <Menu.Item
+                        key="remove"
+                        style={{ color: 'red' }}
+                        onClick={() => this.handleDeleteComic(o.id)}
+                      >
+                        <Icon type="delete" />
+                        删除
+                      </Menu.Item>
+                    </Menu>
+                  }
+                  trigger={['contextMenu']}
+                >
+                  <div
+                    className={styles.cover}
+                    style={{ backgroundImage: `url(/server-static/cover/${o.id})` }}
+                  />
+                </Dropdown>
+
                 <p>{o.title}</p>
               </Col>
             ))}

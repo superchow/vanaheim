@@ -8,11 +8,26 @@ import { isUndefined } from 'util';
 export function addComic(data: AddComicFormInfo, cover: File, fileList: File[]) {
   const formData = new FormData();
   formData.append('title', data.title);
-  formData.append('titleOriginal', data.titleOriginal);
-  formData.append('group', data.group);
-  const { artist, tags, parody, reclass, workspaceId, character, rate } = data;
+  const {
+    artist,
+    tags,
+    parody,
+    reclass,
+    workspaceId,
+    character,
+    rate,
+    group,
+    titleOriginal,
+  } = data;
+
   if (parody && parody.length > 0) {
     formData.append('parody', JSON.stringify(parody));
+  }
+  if (titleOriginal) {
+    formData.append('titleOriginal', titleOriginal);
+  }
+  if (group) {
+    formData.append('group', group);
   }
   if (artist && artist.length > 0) {
     formData.append('artist', JSON.stringify(artist));
@@ -59,4 +74,8 @@ export function getComicTags(query: GetComicTagsQuery) {
 
 export function searchComicRawInfo(query: SearchComicRawInfoRequest) {
   return request.get(`v1/crawler?${stringify(query)}`);
+}
+
+export function deleteComicById(id: string) {
+  return request.delete(`v1/comic/${id}`);
 }
