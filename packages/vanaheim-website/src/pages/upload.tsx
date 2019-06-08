@@ -191,8 +191,8 @@ class UploadPage extends React.PureComponent<PageProps, UploadPageState> {
           )}
         </Form.Item>
         <Form.Item label="语言">
-          {form.getFieldDecorator('language', { initialValue: initData.group })(
-            <TagSelect tags={languageTags} />
+          {form.getFieldDecorator('language', { initialValue: initData.language })(
+            <TagSelect multiple tags={languageTags} />
           )}
         </Form.Item>
         <Form.Item label="团体">
