@@ -1,4 +1,3 @@
-import { Parody } from './parody';
 import { BaseResponse } from './../index';
 
 export interface Comic {
@@ -12,7 +11,7 @@ export interface Comic {
   /**
    * 原作
    */
-  parody: Parody[];
+  parody: string[];
   /**
    * 是否阅读
    */
@@ -33,6 +32,10 @@ export interface Comic {
    * 文件大小
    */
   fileSize: number;
+  /**
+   * 仓库 ID
+   */
+  workspaceId: string;
   createdAt: string;
   modifiedAt: string;
 }
@@ -47,6 +50,7 @@ export interface ComicListNode {
 export interface AddComicFormInfo {
   title: string;
   titleOriginal: string;
+  language: string[];
   parody: string[];
   group: string;
   artist: string[];
@@ -79,6 +83,15 @@ export type TagType =
   | 'reclass'
   | 'workspaceId';
 
+export const TagTypeArray: TagType[] = [
+  'tags',
+  'artist',
+  'parody',
+  'group',
+  'character',
+  'reclass',
+  'workspaceId',
+];
 export interface GetComicTagsQuery {
   type: TagType;
 }
@@ -89,3 +102,5 @@ export interface ComicTags {
 }
 
 export type GetComicTagsResponse = BaseResponse<ComicTags[]>;
+
+export type DeleteComicResponse = BaseResponse<Comic>;

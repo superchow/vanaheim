@@ -1,4 +1,4 @@
-import { AddComicFormInfo, GetComicRequestQuery } from 'vanaheim-shared/src/model/comic';
+import { AddComicFormInfo, GetComicRequestQuery } from 'vanaheim-shared';
 import { Service } from 'egg';
 
 export default class ComicService extends Service {
@@ -15,7 +15,6 @@ export default class ComicService extends Service {
     const { offset } = query;
     const comicQuery = this.ctx.model.Comic.find({}, 'title titleOriginal read');
     comicQuery.skip(offset);
-    comicQuery.limit(24);
     ['tags', 'artist', 'parody', 'group', 'character', 'reclass', 'workspaceId'].forEach(key => {
       const data = query[key];
       if (Array.isArray(data) && data.length > 0) {
@@ -36,7 +35,7 @@ export default class ComicService extends Service {
   }
 
   async deleteById(id: string) {
-    return this.ctx.model.Comic.deleteOne({
+    return this.ctx.model.Comic.findByIdAndDelete({
       _id: id,
     });
   }

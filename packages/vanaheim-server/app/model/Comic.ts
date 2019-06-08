@@ -10,7 +10,7 @@ export default (app: Application) => {
     cover: { type: Schema.Types.Buffer },
     rate: { type: Schema.Types.Number },
     reclass: { type: Schema.Types.String },
-    workspaceId: { type: [Schema.Types.String] },
+    workspaceId: { type: Schema.Types.String },
     character: { type: [Schema.Types.String] },
     group: { type: Schema.Types.String },
     parody: { type: [Schema.Types.String] },

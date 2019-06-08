@@ -54,9 +54,6 @@ class TagsPage extends Component<PageProps, PageState> {
       form: { getFieldDecorator },
     } = this.props;
     const tagsCount = comic.tags[tag] || [];
-    if (tagsCount.length === 0) {
-      return null;
-    }
     const tagInfo = tagInfoMap[tag];
     if (!tagInfo) {
       return null;
@@ -75,7 +72,7 @@ class TagsPage extends Component<PageProps, PageState> {
       <StandardFormRow key={tag} title={tagInfo.label} block last={last}>
         {getFieldDecorator(tag)(
           <TagSelector expandable hideCheckAll>
-            {tagsCount.slice(0, 200).map(o => (
+            {tagsCount.map(o => (
               <TagSelector.Option key={o.id} value={o.id}>
                 {`${getTagName(tagInfo.map, o.id)}(${o.count})`}
               </TagSelector.Option>

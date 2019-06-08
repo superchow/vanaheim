@@ -6,7 +6,8 @@ import { join } from 'path';
 import * as mongoose from 'mongoose';
 import { promisify } from 'util';
 import { pipeline } from 'stream';
-import { GetComicRequestQuery, GetComicRequestResponse } from 'vanaheim-shared';
+import { omit } from 'lodash';
+import { GetComicRequestQuery, GetComicRequestResponse, AddComicFormInfo } from 'vanaheim-shared';
 
 export default class ComicController extends Controller {
   async tags() {
@@ -58,8 +59,10 @@ export default class ComicController extends Controller {
       };
       return;
     }
-    await this.service.comic.deleteById(id);
-    ctx.status = 201;
+    const comic = await this.service.comic.deleteById(id);
+    ctx.body = {
+      data: omit(comic, ['cover']),
+    };
   }
 
   public async cover() {
@@ -122,20 +125,27 @@ export default class ComicController extends Controller {
         return [];
       }
     }
-    const formInfo = {
+
+    let numberRate = parseInt(data.rate, 10);
+
+    const formInfo: Partial<AddComicFormInfo> = {
       title: data.title,
       titleOriginal: data.titleOriginal,
       group: data.group,
       artist: arrayStringParser(data.artist),
+      language: arrayStringParser(data.language),
       tags: arrayStringParser(data.tags),
       parody: arrayStringParser(data.parody),
       character: arrayStringParser(data.character),
       workspaceId: data.workspaceId,
       reclass: data.reclass,
-      rate: parseInt(data.rate, 10),
     };
+    if (!isNaN(numberRate)) {
+      formInfo.rate = numberRate;
+    }
     const { workspaceId, title, artist } = formInfo;
     if (!workspaceId) {
+      ctx.status = 400;
       ctx.data = {
         message: '请选择仓库',
       };
@@ -149,7 +159,7 @@ export default class ComicController extends Controller {
       };
       return;
     }
-    if (!title || artist.length === 0) {
+    if (!title || !artist || artist.length === 0) {
       ctx.status = 400;
       ctx.body = {
         message: '标题和作者必须存在',
@@ -162,9 +172,9 @@ export default class ComicController extends Controller {
     if (!(await fs.exists(comicFolder))) {
       await fs.mkdir(comicFolder);
     }
-    const destStream = fs.createWriteStream(
-      join(comicFolder, `[${artist.join(`、`)}] ${data.title}.zip`)
-    );
+    const fileName = `[${artist.join(`、`)}] ${data.title}`;
+    const destStream = fs.createWriteStream(join(comicFolder, `${fileName}.zip`));
+    await fs.writeFile(join(comicFolder, `${fileName}.json`), JSON.stringify(formInfo, null, 2));
     await promisify(pipeline)(tarStream as any, destStream);
     ctx.body = {
       data,
