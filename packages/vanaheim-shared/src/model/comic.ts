@@ -12,6 +12,7 @@ export interface Comic {
    * 原作
    */
   parody: string[];
+  language: string[];
   /**
    * 是否阅读
    */
@@ -81,7 +82,8 @@ export type TagType =
   | 'parody'
   | 'character'
   | 'reclass'
-  | 'workspaceId';
+  | 'workspaceId'
+  | 'language';
 
 export const TagTypeArray: TagType[] = [
   'tags',
@@ -91,6 +93,7 @@ export const TagTypeArray: TagType[] = [
   'character',
   'reclass',
   'workspaceId',
+  'language',
 ];
 export interface GetComicTagsQuery {
   type: TagType;

@@ -7,23 +7,19 @@ import * as mongoose from 'mongoose';
 import { promisify } from 'util';
 import { pipeline } from 'stream';
 import { omit } from 'lodash';
-import { GetComicRequestQuery, GetComicRequestResponse, AddComicFormInfo } from 'vanaheim-shared';
+import {
+  GetComicRequestQuery,
+  GetComicRequestResponse,
+  AddComicFormInfo,
+  TagTypeArray,
+} from 'vanaheim-shared';
 
 export default class ComicController extends Controller {
   async tags() {
     const { ctx } = this;
     const query: GetComicTagsQuery = ctx.query;
-    const supportTagType = [
-      'tags',
-      'artist',
-      'parody',
-      'group',
-      'character',
-      'reclass',
-      'workspaceId',
-    ];
     const { type } = query;
-    if (!query.type || supportTagType.every(tag => tag !== query.type)) {
+    if (!query.type || TagTypeArray.every(tag => tag !== query.type)) {
       ctx.status = 401;
       ctx.body = { message: '不支持的 tag 类型' };
       return;

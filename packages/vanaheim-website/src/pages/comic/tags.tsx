@@ -8,7 +8,7 @@ import { UmiComponentProps, GlobalState } from '@/common/types';
 import { connect } from 'dva';
 import { asyncFetchTags, asyncGetComic, setList, asyncDeleteComic } from '@/actions/comic';
 import { getTagName, tagInfoMap, Tag } from '@/common/database';
-import { TagType } from 'vanaheim-shared';
+import { TagType, TagTypeArray } from 'vanaheim-shared';
 import styles from './recent.scss';
 
 const mapStateToProps = ({ comic, loading, workspace }: GlobalState) => ({
@@ -26,7 +26,7 @@ class TagsPage extends Component<PageProps, PageState> {
   constructor(props: PageProps) {
     super(props);
     this.state = {
-      tags: ['tags', 'artist', 'parody', 'group', 'character', 'reclass', 'workspaceId'],
+      tags: TagTypeArray,
     };
   }
 

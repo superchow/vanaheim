@@ -72,4 +72,5 @@ export const tagInfoMap: {
   character: { label: '角色', map: characterTagsTagsSet },
   reclass: { label: '类别', map: reclassTagsSet },
   workspaceId: { label: '仓库', map: reclassTagsSet },
+  language: { label: '语言', map: languageTagsSet },
 };

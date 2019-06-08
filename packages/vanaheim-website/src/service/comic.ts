@@ -18,6 +18,7 @@ export function addComic(data: AddComicFormInfo, cover: File, fileList: File[]) 
     rate,
     group,
     titleOriginal,
+    language,
   } = data;
 
   if (parody && parody.length > 0) {
@@ -37,6 +38,9 @@ export function addComic(data: AddComicFormInfo, cover: File, fileList: File[]) 
   }
   if (tags && tags.length > 0) {
     formData.append('tags', JSON.stringify(tags));
+  }
+  if (language && language.length > 0) {
+    formData.append('language', JSON.stringify(language));
   }
   if (reclass) {
     formData.append('reclass', reclass);
