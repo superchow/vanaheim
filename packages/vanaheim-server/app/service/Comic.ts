@@ -1,6 +1,8 @@
 import { AddComicFormInfo, GetComicRequestQuery } from 'vanaheim-shared';
 import { Service } from 'egg';
-
+import { fs } from 'mz';
+import { join } from 'path';
+import * as mongoose from 'mongoose';
 export default class ComicService extends Service {
   async add(comic: Partial<AddComicFormInfo>, cover: string) {
     return this.ctx.model.Comic.create({
@@ -35,9 +37,27 @@ export default class ComicService extends Service {
   }
 
   async deleteById(id: string) {
-    return this.ctx.model.Comic.findByIdAndDelete({
+    const comic = await this.ctx.model.Comic.findOneAndDelete({
       _id: id,
     });
+    if (comic) {
+      const workspaceId = comic.workspaceId;
+      const workspace = await this.ctx.model.Workspace.findById({
+        _id: workspaceId,
+      });
+      if (workspace && (await fs.exists(workspace.path))) {
+        const deleted = join(workspace.path, 'deleted');
+        if (!(await fs.exists(deleted))) {
+          await fs.mkdir(deleted);
+        }
+        let id = mongoose.Types.ObjectId(comic._id).toString();
+        const projectPath = join(workspace.path, id);
+        if (await fs.exists(projectPath)) {
+          await fs.rename(projectPath, join(deleted, id));
+        }
+      }
+    }
+    return comic;
   }
 
   async countTags(type: string) {
