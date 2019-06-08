@@ -5,7 +5,11 @@ import { join } from 'path';
 export default class WorkspaceService extends Service {
   async add(name: string, path: string) {
     if (!(await fs.exists(path))) {
-      throw new Error('文件夹不存在');
+      throw new Error('创建失败，文件夹不存在');
+    }
+    const workspaces = await this.ctx.model.Workspace.find({});
+    if (workspaces.some(o => path.startsWith(o.path))) {
+      throw new Error('创建失败，仓库之间不能重叠');
     }
     return this.ctx.model.Workspace.create({
       name,
@@ -33,6 +37,17 @@ export default class WorkspaceService extends Service {
   }
 
   async delete(id: string) {
+    const workspace = await this.ctx.model.Workspace.findById({
+      _id: id,
+    });
+    if (workspace) {
+      if (await fs.exists(workspace.path)) {
+        const files = await fs.readdir(workspace.path);
+        if (files.length !== 0) {
+          throw new Error('删除失败，仓库不为空');
+        }
+      }
+    }
     await this.ctx.model.Workspace.deleteOne({
       _id: id,
     });

@@ -37,10 +37,17 @@ export default class WorkspaceController extends Controller {
       },
       body
     );
-    await this.service.workspace.delete(body.id);
-    ctx.body = {
-      data: body.id,
-    };
+    try {
+      await this.service.workspace.delete(body.id);
+      ctx.body = {
+        data: body.id,
+      };
+    } catch (error) {
+      ctx.status = 400;
+      ctx.body = {
+        message: error.message,
+      };
+    }
   }
 
   public async listFile() {

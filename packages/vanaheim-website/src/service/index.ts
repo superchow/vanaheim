@@ -1,5 +1,5 @@
 import { extend, ResponseError } from 'umi-request';
-import { notification } from 'antd';
+import { notification, message } from 'antd';
 
 const codeMessage: {
   [key: number]: string;
@@ -28,6 +28,10 @@ export const request = extend({
     const { response = {} as Response } = error;
     const { status, url } = response;
     const body = await response.json();
+    if (body.message) {
+      message.error(body.message);
+      return;
+    }
     notification.error({
       message: `请求错误 ${status}: ${url}`,
       description: body.message || codeMessage[response.status],
