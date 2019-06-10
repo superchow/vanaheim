@@ -16,7 +16,9 @@ export default class ComicService extends Service {
 
   async list(query: GetComicRequestQuery) {
     const { offset = 0 } = query;
-    const comicQuery = this.ctx.model.Comic.find({}, 'title titleOriginal read');
+    const comicQuery = this.ctx.model.Comic.find({}, 'title titleOriginal read').sort({
+      createdAt: -1,
+    });
     comicQuery.skip(offset);
     TagTypeArray.forEach(key => {
       const data = query[key];

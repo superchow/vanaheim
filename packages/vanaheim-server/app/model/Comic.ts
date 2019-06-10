@@ -19,7 +19,7 @@ export default (app: Application) => {
     read: { type: Schema.Types.Boolean },
     artist: { type: [Schema.Types.String] },
     fileSize: { type: Schema.Types.Number },
-    createdAt: { type: Schema.Types.Date },
+    createdAt: { type: Schema.Types.Date, index: true },
     modifiedAt: { type: Schema.Types.Date },
   });
   return mongoose.model<Document & Comic>('Comic', comicSchema);
