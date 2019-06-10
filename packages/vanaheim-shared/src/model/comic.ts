@@ -70,7 +70,7 @@ export interface GetComicRequestQuery {
   character?: string[];
   group?: string[];
   workspaceId?: string[];
-  offset: number;
+  offset?: number;
 }
 
 export type GetComicRequestResponse = BaseResponse<ComicListNode[]>;
@@ -96,7 +96,8 @@ export const TagTypeArray: TagType[] = [
   'language',
 ];
 export interface GetComicTagsQuery {
-  type: TagType;
+  tagTypes: TagType[];
+  selectTags?: Omit<GetComicRequestQuery, 'offset'>;
 }
 
 export interface ComicTags {
@@ -104,6 +105,8 @@ export interface ComicTags {
   count: number;
 }
 
-export type GetComicTagsResponse = BaseResponse<ComicTags[]>;
+export type GetComicTagsResponse = BaseResponse<{
+  [type: string]: ComicTags[];
+}>;
 
 export type DeleteComicResponse = BaseResponse<Comic>;

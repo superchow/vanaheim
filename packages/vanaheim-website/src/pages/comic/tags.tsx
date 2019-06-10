@@ -10,32 +10,36 @@ import { asyncFetchTags, asyncGetComic, setList, asyncDeleteComic } from '@/acti
 import { getTagName, tagInfoMap, Tag } from '@/common/database';
 import { TagType, TagTypeArray } from 'vanaheim-shared';
 import styles from './recent.scss';
+import { History } from 'history';
 
-const mapStateToProps = ({ comic, loading, workspace }: GlobalState) => ({
-  comic,
-  loading,
-  workspace,
-});
+const mapStateToProps = ({ comic, loading, workspace }: GlobalState) => {
+  return {
+    comic,
+    loading,
+    workspace,
+  };
+};
 type PageStateProps = ReturnType<typeof mapStateToProps>;
 type PageProps = PageStateProps & UmiComponentProps & FormComponentProps;
-type PageState = {
-  tags: TagType[];
-};
 
-class TagsPage extends Component<PageProps, PageState> {
-  constructor(props: PageProps) {
-    super(props);
-    this.state = {
-      tags: TagTypeArray,
-    };
+function getTagsFromHistory(history: History): TagType[] {
+  const { query = {} } = history.location as any;
+  const tags: TagType | TagType[] = query.tags || TagTypeArray;
+  if (Array.isArray(tags)) {
+    return tags;
   }
+  return [tags];
+}
 
+class TagsPage extends Component<PageProps> {
   componentDidMount = () => {
-    const tags = this.state.tags;
-    const { dispatch } = this.props;
-    tags.forEach(tag => {
-      dispatch(asyncFetchTags.started({ type: tag }));
-    });
+    const { dispatch, history, form } = this.props;
+    dispatch(
+      asyncFetchTags.started({
+        tagTypes: getTagsFromHistory(history),
+        selectTags: form.getFieldsValue(),
+      })
+    );
     dispatch(
       asyncGetComic({
         offset: 0,
@@ -55,7 +59,7 @@ class TagsPage extends Component<PageProps, PageState> {
     } = this.props;
     const tagsCount = comic.tags[tag] || [];
     const tagInfo = tagInfoMap[tag];
-    if (!tagInfo) {
+    if (!tagInfo || tagsCount.length === 0) {
       return null;
     }
     if (tag === 'workspaceId') {
@@ -88,8 +92,8 @@ class TagsPage extends Component<PageProps, PageState> {
   };
 
   render() {
-    const { tags } = this.state;
-    const { comic } = this.props;
+    const { comic, history } = this.props;
+    const tags: TagType[] = getTagsFromHistory(history);
     return (
       <React.Fragment>
         <Card style={{ marginBottom: 24 }}>
@@ -131,11 +135,17 @@ class TagsPage extends Component<PageProps, PageState> {
 }
 
 const WarpForm = Form.create<PageProps>({
-  onValuesChange({ dispatch }: PageProps, __, allValues) {
+  onValuesChange({ dispatch, history }: PageProps, __, allValues) {
     dispatch(
       asyncGetComic({
         ...allValues,
         offset: 0,
+      })
+    );
+    dispatch(
+      asyncFetchTags.started({
+        tagTypes: getTagsFromHistory(history),
+        selectTags: allValues,
       })
     );
   },

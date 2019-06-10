@@ -1,6 +1,6 @@
 export interface MenuNode {
   name: string;
-  icon: string;
+  icon?: string;
   path: string;
 }
 export interface SubMenu {
@@ -18,6 +18,8 @@ export function isSubMenu(menu: Menu): menu is SubMenu {
   return false;
 }
 
+export const defaultOpenKeys = ['漫画', '标签', '设置'];
+
 export default [
   {
     name: '漫画',
@@ -34,8 +36,15 @@ export default [
         children: [
           {
             name: '全部',
-            icon: 'tags',
             path: '/comic/tags',
+          },
+          {
+            name: '作家',
+            path: '/comic/tags?tags=artist',
+          },
+          {
+            name: '团体',
+            path: '/comic/tags?tags=group',
           },
         ],
       },

@@ -19,6 +19,9 @@ export default function() {
       jsonLimit: '500mb',
       formLimit: '600mb',
     },
+    meta: {
+      ignore: ctx => ctx.path.startsWith('/static/comic'),
+    },
     multipart: {
       mode: 'stream',
       autoFields: false,

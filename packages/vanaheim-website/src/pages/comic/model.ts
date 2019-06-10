@@ -2,7 +2,7 @@ import { DvaModelBuilder } from 'dva-model-creator';
 import { GlobalState } from '@/common/types';
 import { asyncGetComic, setList, asyncFetchTags, asyncDeleteComic } from '@/actions/comic';
 import { getComic, getComicTags, deleteComicById } from '@/service/comic';
-import { GetComicRequestResponse, GetComicTagsResponse, TagTypeArray } from 'vanaheim-shared';
+import { GetComicRequestResponse, GetComicTagsResponse } from 'vanaheim-shared';
 import update from 'immutability-helper';
 import { DeleteComicResponse } from 'vanaheim-shared/src';
 import { message } from 'antd';
@@ -18,16 +18,6 @@ builder.takeEvery(asyncDeleteComic, function*(id, { call, put, select }) {
   const response: DeleteComicResponse = yield call(deleteComicById, id);
   if (!response) {
     return;
-  }
-  for (const tag of TagTypeArray) {
-    let meta = response.data[tag];
-    if (!meta) {
-      continue;
-    }
-    if (Array.isArray(meta.length) && meta.length === 0) {
-      continue;
-    }
-    yield put(asyncFetchTags.started({ type: tag }));
   }
   const global: GlobalState = yield select(state => state);
   yield put(setList(global.comic.list.filter(o => o.id !== id)));
@@ -51,19 +41,15 @@ builder.takeEvery(asyncFetchTags.started, function*(query, { call, put }) {
   yield put(
     asyncFetchTags.done({
       params: query,
-      result: {
-        tags: response.data,
-      },
+      result: response,
     })
   );
 });
 
-builder.case(asyncFetchTags.done, (state, { params, result }) =>
+builder.case(asyncFetchTags.done, (state, { result }) =>
   update(state, {
     tags: {
-      [params.type]: {
-        $set: result.tags,
-      },
+      $set: result.data,
     },
   })
 );

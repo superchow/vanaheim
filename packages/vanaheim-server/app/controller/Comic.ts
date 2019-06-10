@@ -11,28 +11,74 @@ import {
   GetComicRequestQuery,
   GetComicRequestResponse,
   AddComicFormInfo,
-  TagTypeArray,
+  ComicTags,
 } from 'vanaheim-shared';
 
 export default class ComicController extends Controller {
   async tags() {
     const { ctx } = this;
-    const query: GetComicTagsQuery = ctx.query;
-    const { type } = query;
-    if (!query.type || TagTypeArray.every(tag => tag !== query.type)) {
+    const body: GetComicTagsQuery = ctx.request.body;
+    const { tagTypes, selectTags } = body;
+    const tags = await Promise.all(
+      tagTypes.map(async type => {
+        return {
+          type,
+          value: await this.service.comic.countTags(type, selectTags),
+        };
+      })
+    );
+    ctx.body = {
+      data: tags.reduce(
+        (p, c) => {
+          p[c.type] = c.value;
+          return p;
+        },
+        {} as {
+          [type: string]: ComicTags[];
+        }
+      ),
+    };
+  }
+
+  public async getZip() {
+    const { ctx } = this;
+    const {
+      params: { id },
+    } = ctx;
+    if (!id) {
       ctx.status = 401;
-      ctx.body = { message: '不支持的 tag 类型' };
+      ctx.body = {
+        message: '参数错误，缺少 ID',
+      };
       return;
     }
-    ctx.body = {
-      data: await this.service.comic.countTags(type),
-    };
+    try {
+      const comic = await ctx.service.comic.getComicPath(id);
+      const { comicPath } = comic;
+      const stat = await fs.stat(comicPath);
+      const { size } = stat;
+      ctx.set('Server', `ComicGlassMediaServer/1.0`);
+      if (this.ctx.request.method === 'HEAD') {
+        ctx.status = 206;
+        ctx.set('Content-Length', `9`);
+        ctx.set('Content-Range', `bytes 0-8/${size}`);
+        return;
+      }
+      ctx.set('Content-Length', `${size}`);
+      ctx.body = fs.createReadStream(comicPath);
+    } catch (error) {
+      ctx.status = 401;
+      ctx.body = {
+        message: error.message,
+      };
+    }
   }
 
   public async list() {
     const { ctx } = this;
     const body: GetComicRequestQuery = ctx.request.body;
     const response = await this.service.comic.list(body);
+
     ctx.body = {
       data: response.map(({ _id, title, titleOriginal, read }) => ({
         id: _id,

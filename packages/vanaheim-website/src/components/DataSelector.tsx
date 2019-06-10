@@ -116,6 +116,9 @@ export default class DataSelector extends React.Component<Props> {
                 return null;
               }
               tags = Array.isArray(tags) ? tags : [tags];
+              if (tags.length === 0) {
+                return null;
+              }
               return (
                 <div key={key}>
                   <h6

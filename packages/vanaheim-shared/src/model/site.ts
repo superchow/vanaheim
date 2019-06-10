@@ -27,6 +27,7 @@ export interface ComicRawInfo {
    * 标签
    */
   tags: string[];
+  language: string[];
 }
 
 export interface SearchComicRawInfoRequest {

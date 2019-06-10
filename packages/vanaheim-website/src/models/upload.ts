@@ -1,3 +1,4 @@
+import { cleanComicInfo } from './../actions/upload';
 import { SearchComicRawInfoResponse } from './../../../vanaheim-shared/src/model/site';
 import { DvaModelBuilder } from 'dva-model-creator';
 import { asyncUploadComic, setComicRawInfo, asyncSearchComic } from '@/actions/upload';
@@ -34,6 +35,13 @@ builder
         [type]: {
           $set: data,
         },
+      },
+    })
+  )
+  .case(cleanComicInfo, state =>
+    update(state, {
+      comicInfo: {
+        $set: {},
       },
     })
   );

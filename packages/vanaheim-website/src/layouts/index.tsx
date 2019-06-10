@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Layout, Menu, Icon, PageHeader } from 'antd';
-import menus, { Menu as IMenu, isSubMenu } from 'common/menus';
+import menus, { Menu as IMenu, isSubMenu, defaultOpenKeys } from 'common/menus';
 import { connect } from 'dva';
 import { GlobalState, UmiComponentProps } from '@/common/types';
 import { SelectParam } from 'antd/lib/menu';
@@ -51,8 +51,10 @@ class BasicLayout extends PureComponent<PageProps> {
   };
 
   handleRenderSider = () => {
-    const { history } = this.props;
-    let selectedKeys: string[] = [history.location.pathname];
+    const {
+      history: { location },
+    } = this.props;
+    let selectedKeys: string[] = [`${location.pathname}${location.search}`];
     return (
       <Sider
         className={styles.sider}
@@ -66,7 +68,7 @@ class BasicLayout extends PureComponent<PageProps> {
           mode="inline"
           selectedKeys={selectedKeys}
           onSelect={this.handleSelectMenu}
-          defaultOpenKeys={menus.map(o => o.name)}
+          defaultOpenKeys={defaultOpenKeys}
         >
           {menus.map(o => this.renderMenu(o))}
         </Menu>
@@ -76,8 +78,9 @@ class BasicLayout extends PureComponent<PageProps> {
 
   render() {
     const title = pageHeaderInfo[this.props.history.location.pathname];
+    const { collapsed } = this.state;
     return (
-      <Layout>
+      <Layout style={{ marginLeft: collapsed ? 80 : 200 }}>
         {this.handleRenderSider()}
         <Layout>
           <Content className={styles.content}>

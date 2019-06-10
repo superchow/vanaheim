@@ -6,7 +6,7 @@ import { FormComponentProps } from 'antd/lib/form';
 import { GlobalState, UmiComponentProps } from '@/common/types';
 import { connect } from 'dva';
 import { asyncListWorkspace } from '@/actions/workspace';
-import { asyncUploadComic, asyncSearchComic } from '@/actions/upload';
+import { asyncUploadComic, asyncSearchComic, cleanComicInfo } from '@/actions/upload';
 import { AddComicFormInfo, ComicSite } from 'vanaheim-shared';
 import TagSelect from '@/components/tagSelect';
 import {
@@ -57,7 +57,7 @@ class UploadPage extends React.PureComponent<PageProps, UploadPageState> {
       comicFolder: null,
       initData: {},
       deleteImage: new Set<string>(),
-      currentTab: ComicSite.EHentai,
+      currentTab: ComicSite.NHentai,
       searchQuery: '',
     };
   }
@@ -94,7 +94,10 @@ class UploadPage extends React.PureComponent<PageProps, UploadPageState> {
           fileList: comicFolder.files
             .filter(o => !this.state.deleteImage.has(o.previewUrl))
             .map(o => o.file),
-          callback: () => this.handleSelect(null),
+          callback: () => {
+            this.handleSelect(null);
+            this.props.dispatch(cleanComicInfo());
+          },
         })
       );
     });
@@ -252,7 +255,10 @@ class UploadPage extends React.PureComponent<PageProps, UploadPageState> {
                 disabled={loading.effects[asyncUploadComic.type]}
                 type="danger"
                 block
-                onClick={() => this.handleSelect(null)}
+                onClick={() => {
+                  this.handleSelect(null);
+                  this.props.dispatch(cleanComicInfo());
+                }}
               >
                 取消导入
               </Button>
@@ -325,7 +331,7 @@ class UploadPage extends React.PureComponent<PageProps, UploadPageState> {
         defaultActiveKey={this.state.currentTab}
         style={{ background: 'white', minHeight: 300, padding: 10 }}
       >
-        <TabPane tab={<span>E-Hentai</span>} key={ComicSite.EHentai}>
+        <TabPane tab={<span>N-Hentai</span>} key={ComicSite.NHentai}>
           <Spin tip="Loading..." spinning={!!this.props.loading.effects[asyncSearchComic.type]}>
             <TagSelector
               data={this.props.upload.comicInfo[this.state.currentTab] || []}
@@ -352,7 +358,6 @@ class UploadPage extends React.PureComponent<PageProps, UploadPageState> {
               }}
             />
           </Spin>
-          ,
         </TabPane>
       </Tabs>
     </React.Fragment>

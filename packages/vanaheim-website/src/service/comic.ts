@@ -73,7 +73,9 @@ export function getComic(body: GetComicRequestQuery) {
 }
 
 export function getComicTags(query: GetComicTagsQuery) {
-  return request.get(`v1/comic/tags?${stringify(query)}`);
+  return request.post(`v1/comic/tagsCount`, {
+    data: query,
+  });
 }
 
 export function searchComicRawInfo(query: SearchComicRawInfoRequest) {

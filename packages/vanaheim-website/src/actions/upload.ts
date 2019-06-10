@@ -16,3 +16,5 @@ export const asyncSearchComic = actionCreator<SearchComicRawInfoRequest>('ASYNC_
 export const setComicRawInfo = actionCreator<{ type: ComicSite; data: ComicRawInfo[] }>(
   'SET_COMIC_RAW_INFO'
 );
+
+export const cleanComicInfo = actionCreator('cleanComicInfo');

@@ -6,8 +6,6 @@ import * as Cheerio from 'cheerio';
 export default class CrawlerService extends Service {
   eHentaiRequest = {
     timeout: 5000,
-    // enableProxy: true,
-    // proxy: 'http://localhost:1087',
     headers: {
       'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,ja;q=0.7,zh-TW;q=0.6',
       'User-Agent':
@@ -21,13 +19,106 @@ export default class CrawlerService extends Service {
     if (type === ComicSite.EHentai) {
       return this.getFromEHentai(keyword);
     }
+    if (type === ComicSite.NHentai) {
+      return this.getFromNHentai(keyword);
+    }
+  }
+
+  private async getFromNHentai(query: string) {
+    const host = 'https://nhentai.net';
+    const response = await request(`${host}/search/?q=${query}`, this.eHentaiRequest);
+    const $ = Cheerio.load(response.data, {
+      decodeEntities: false,
+    });
+    const rawInfo: Partial<ComicRawInfo>[] = [];
+    const linkList = tryFunction(() => {
+      return Array.from($('.cover')).map(o => `${host}${o.attribs.href}`);
+    }, []);
+    if (linkList) {
+      for (const url of linkList.slice(0, 2)) {
+        const response = await this.getFromHentaiDetail(url);
+        if (response) {
+          rawInfo.push(response);
+        }
+      }
+    }
+    return rawInfo;
+  }
+
+  private async getFromHentaiDetail(url): Promise<Partial<ComicRawInfo>> {
+    const response = await request(`${url}`, this.eHentaiRequest);
+    const $ = Cheerio.load(response.data, {
+      decodeEntities: false,
+    });
+
+    const titleOriginal = tryFunction(() => {
+      return $('#info > h2').text();
+    });
+    const title = tryFunction(() => {
+      return $('#info > h1').text();
+    });
+
+    const tagsInfo =
+      tryFunction<{ [tag: string]: string[] }>(() => {
+        const result: { [tag: string]: string[] } = {};
+        const getTag = (element: CheerioElement) => {
+          let tagName = tryFunction(() => {
+            return /(.*):/.exec(Cheerio(element).text())![1];
+          }, '');
+          let list = tryFunction(() => {
+            return Array.from(Cheerio(element).find('a')).map(o =>
+              Cheerio(o)
+                .removeClass('count')
+                .text()
+                .replace(/\(.*\)/, '')
+                .trim()
+            );
+          }, []);
+          return { tagName, list };
+        };
+        Array.from($('#tags > div'))
+          .map(getTag)
+          .forEach(({ tagName, list }) => {
+            if (tagName && list) {
+              result[tagName.trim()] = list;
+            }
+          });
+        return result;
+      }) || {};
+
+    const {
+      Parodies: parody,
+      Characters: character,
+      Tags: tags,
+      Artists: artist,
+      Groups: group,
+      Languages: language,
+      Categories: reclass,
+    } = tagsInfo;
+    const cover = tryFunction<string>(() => {
+      return $('#cover > a > img').attr()['data-src'];
+    });
+    const res: Partial<ComicRawInfo> = {
+      titleOriginal,
+      title,
+      tags,
+      language,
+      parody,
+      artist,
+      character,
+      cover,
+    };
+    if (group && group.length > 0) {
+      res.group = group[0];
+    }
+    if (reclass && reclass.length > 0) {
+      res.reclass = reclass[0];
+    }
+    return res;
   }
 
   private async getFromEHentai(query) {
-    const response = await request(
-      `https://proxlet.now.sh/https://e-hentai.org/?f_search=${query}`,
-      this.eHentaiRequest
-    );
+    const response = await request(`https://e-hentai.org/?f_search=${query}`, this.eHentaiRequest);
     const $ = Cheerio.load(response.data, {
       decodeEntities: false,
     });
@@ -48,7 +139,7 @@ export default class CrawlerService extends Service {
   }
 
   private async getEHentaiDetail(url): Promise<Partial<ComicRawInfo>> {
-    const response = await request(`https://proxlet.now.sh/${url}`, this.eHentaiRequest);
+    const response = await request(`${url}`, this.eHentaiRequest);
     const $ = Cheerio.load(response.data, {
       decodeEntities: false,
     });
