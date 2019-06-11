@@ -3,14 +3,15 @@ import React, { Component } from 'react';
 import TagSelector from '@/components/TagSelector';
 import StandardFormRow from '@/components/StandardFormRow';
 import { FormComponentProps } from 'antd/es/form';
-import { Card, Form, Row, Col, Dropdown, Menu, Icon } from 'antd';
+import { Card, Form, Row, Col } from 'antd';
 import { UmiComponentProps, GlobalState } from '@/common/types';
 import { connect } from 'dva';
-import { asyncFetchTags, asyncGetComic, setList, asyncDeleteComic } from '@/actions/comic';
+import { asyncFetchTags, asyncGetComic, setList } from '@/actions/comic';
 import { getTagName, tagInfoMap, Tag } from '@/common/database';
 import { TagType, TagTypeArray } from 'vanaheim-shared';
 import styles from './recent.scss';
 import { History } from 'history';
+import ContextMenu from './components/ContextMenu';
 
 const mapStateToProps = ({ comic, loading, workspace }: GlobalState) => {
   return {
@@ -87,10 +88,6 @@ class TagsPage extends Component<PageProps> {
     );
   };
 
-  handleDeleteComic = (id: string) => {
-    this.props.dispatch(asyncDeleteComic(id));
-  };
-
   render() {
     const { comic, history } = this.props;
     const tags: TagType[] = getTagsFromHistory(history);
@@ -103,27 +100,12 @@ class TagsPage extends Component<PageProps> {
           <Row gutter={20} type="flex">
             {comic.list.map(o => (
               <Col key={o.id} xs={12} md={8} lg={6} xl={4}>
-                <Dropdown
-                  overlay={
-                    <Menu>
-                      <Menu.Item
-                        key="remove"
-                        style={{ color: 'red' }}
-                        onClick={() => this.handleDeleteComic(o.id)}
-                      >
-                        <Icon type="delete" />
-                        删除
-                      </Menu.Item>
-                    </Menu>
-                  }
-                  trigger={['contextMenu']}
-                >
+                <ContextMenu comicId={o.id}>
                   <div
                     className={styles.cover}
                     style={{ backgroundImage: `url(/server-static/cover/${o.id})` }}
                   />
-                </Dropdown>
-
+                </ContextMenu>
                 <p>{o.title}</p>
               </Col>
             ))}
