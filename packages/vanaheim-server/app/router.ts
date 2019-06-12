@@ -3,6 +3,13 @@ const range = require('koa-range');
 
 export default (app: Application) => {
   const { router, controller } = app;
+
+  router.get('/api/v1/bookshelves', controller.bookshelf.list);
+  router.post('/api/v1/bookshelves', controller.bookshelf.add);
+  router.delete('/api/v1/bookshelves/:id', controller.bookshelf.remove);
+  router.post('/api/v1/bookshelves/:id/comics', controller.bookshelf.addComic);
+  router.delete('/api/v1/bookshelves/:id/comics', controller.bookshelf.removeComic);
+
   router.post('/api/v1/workspace', controller.workspace.add);
   router.get('/api/v1/workspace', controller.workspace.list);
   router.delete('/api/v1/workspace', controller.workspace.delete);

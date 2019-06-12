@@ -48,6 +48,11 @@ export default [
           },
         ],
       },
+      {
+        name: '书架',
+        icon: 'book',
+        path: '/comic/bookshelf',
+      },
     ],
   },
   {
