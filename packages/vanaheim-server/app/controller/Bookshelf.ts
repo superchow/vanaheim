@@ -5,15 +5,9 @@ export default class BookShelfController extends Controller {
   public async add() {
     const { ctx } = this;
     const body = ctx.request.body;
-    try {
-      await this.service.bookshelf.add(body.title);
-      ctx.status = 201;
-    } catch (error) {
-      ctx.status = 400;
-      ctx.body = {
-        message: error.message,
-      };
-    }
+    ctx.body = {
+      data: await this.service.bookshelf.add(body.title),
+    };
   }
 
   public async remove() {
@@ -34,29 +28,15 @@ export default class BookShelfController extends Controller {
     const { ctx } = this;
     const body: AddComicRequest = ctx.request.body;
     const bookShelfId = ctx.params.id;
-    try {
-      await this.service.bookshelf.addComic(bookShelfId, body.comicId);
-      ctx.status = 204;
-    } catch (error) {
-      ctx.status = 400;
-      ctx.body = {
-        message: error.message,
-      };
-    }
+    await this.service.bookshelf.addComic(bookShelfId, body.comicId);
+    ctx.status = 204;
   }
 
   public async removeComic() {
     const { ctx } = this;
     const body: DeleteComicRequest = ctx.request.body;
     const bookShelfId = ctx.params.id;
-    try {
-      await this.service.bookshelf.removeComic(bookShelfId, body.comicId);
-      ctx.status = 204;
-    } catch (error) {
-      ctx.status = 400;
-      ctx.body = {
-        message: error.message,
-      };
-    }
+    await this.service.bookshelf.removeComic(bookShelfId, body.comicId);
+    ctx.status = 204;
   }
 }

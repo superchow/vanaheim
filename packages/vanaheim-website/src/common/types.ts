@@ -1,4 +1,10 @@
-import { WorkspaceWithId, ComicTags, ComicRawInfo, ComicListNode } from 'vanaheim-shared';
+import {
+  WorkspaceWithId,
+  ComicTags,
+  ComicRawInfo,
+  ComicListNode,
+  Bookshelf,
+} from 'vanaheim-shared';
 import { History } from 'history';
 import { Dispatch } from 'react';
 import { TreeNodeNormal } from 'antd/lib/tree-select/interface';
@@ -8,6 +14,7 @@ export interface GlobalState {
   loading: DvaLoadingState;
   workspaceModal: WorkspaceModalModel;
   comic: ComicModel;
+  bookshelf: BookshelfModel;
   upload: UploadModel;
 }
 
@@ -41,4 +48,8 @@ export interface ComicModel {
   tags: {
     [type: string]: ComicTags[];
   };
+}
+
+export interface BookshelfModel {
+  list: Bookshelf[];
 }

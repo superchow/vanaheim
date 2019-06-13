@@ -2,6 +2,7 @@ import { EggAppConfig, PowerPartial } from 'egg';
 
 export default function() {
   const config = {
+    middleware: ['error'],
     mongoose: {
       url: 'mongodb://127.0.0.1/admin',
       options: {},

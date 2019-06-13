@@ -1,14 +1,15 @@
+import { BadRequestError, NotFoundRequestError } from './../common/error';
 import { Bookshelf } from 'vanaheim-shared';
 import { Service } from 'egg';
 
 export default class BookShelfService extends Service {
   async add(bookShelfTitle: string): Promise<Bookshelf> {
     if (!bookShelfTitle) {
-      throw new Error('请输入书架标题');
+      throw new BadRequestError('请输入书架标题');
     }
     const bookshelfList = await this.ctx.model.Bookshelf.find({});
     if (bookshelfList.some(o => bookShelfTitle === o.title)) {
-      throw new Error('书架标题不能重复');
+      throw new BadRequestError('书架标题不能重复');
     }
     const { id, createdAt, modifiedAt, title, comicList } = await this.ctx.model.Bookshelf.create({
       title: bookShelfTitle,
@@ -39,7 +40,7 @@ export default class BookShelfService extends Service {
   async deleteById(bookShelfId: string) {
     const bookshelf = await this.ctx.model.Bookshelf.findById(bookShelfId);
     if (!bookshelf) {
-      throw new Error('删除漫画失败 书架不存在');
+      throw new NotFoundRequestError('书架已经被删除');
     }
     await this.ctx.model.Bookshelf.findByIdAndDelete(bookShelfId);
   }
@@ -47,11 +48,11 @@ export default class BookShelfService extends Service {
   public async addComic(bookShelfId: string, comicId: string) {
     const bookshelf = await this.ctx.model.Bookshelf.findById(bookShelfId);
     if (!bookshelf) {
-      throw new Error('添加漫画失败 书架不存在');
+      throw new NotFoundRequestError('添加漫画失败 书架不存在');
     }
     const comic = await this.ctx.model.Comic.findById(comicId);
     if (!comic) {
-      throw new Error('添加漫画失败 漫画不存在');
+      throw new NotFoundRequestError('添加漫画失败 漫画不存在');
     }
     await this.ctx.model.Bookshelf.findOneAndUpdate(
       {
@@ -67,7 +68,7 @@ export default class BookShelfService extends Service {
   public async removeComic(bookShelfId: string, comicId: string) {
     const bookshelf = await this.ctx.model.Bookshelf.findById(bookShelfId);
     if (!bookshelf) {
-      throw new Error('删除漫画失败 书架不存在');
+      throw new NotFoundRequestError('删除漫画失败 书架不存在');
     }
     await this.ctx.model.Bookshelf.findOneAndUpdate(
       {
