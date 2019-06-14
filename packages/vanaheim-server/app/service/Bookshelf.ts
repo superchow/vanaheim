@@ -1,5 +1,5 @@
 import { BadRequestError, NotFoundRequestError } from './../common/error';
-import { Bookshelf } from 'vanaheim-shared';
+import { Bookshelf, BookshelfDetail, ComicListNode } from 'vanaheim-shared';
 import { Service } from 'egg';
 
 export default class BookShelfService extends Service {
@@ -43,6 +43,27 @@ export default class BookShelfService extends Service {
       throw new NotFoundRequestError('书架已经被删除');
     }
     await this.ctx.model.Bookshelf.findByIdAndDelete(bookShelfId);
+  }
+
+  async getDetail(bookShelfId: string): Promise<BookshelfDetail> {
+    const bookshelf = await this.ctx.model.Bookshelf.findById(bookShelfId);
+    if (!bookshelf) {
+      throw new NotFoundRequestError('书架不存在');
+    }
+    const { title, createdAt, modifiedAt, id, comicList } = bookshelf;
+
+    const comicDetail = (await Promise.all(
+      comicList.map(async id => {
+        const comic = await this.ctx.model.Comic.findOne({ _id: id }, 'title titleOriginal read');
+        if (!comic) {
+          return;
+        }
+        const { title, titleOriginal } = comic;
+        return { title, titleOriginal, id };
+      })
+    )).filter((o): o is ComicListNode => !!o);
+
+    return { title, createdAt, modifiedAt, id, comicList: comicDetail };
   }
 
   public async addComic(bookShelfId: string, comicId: string) {

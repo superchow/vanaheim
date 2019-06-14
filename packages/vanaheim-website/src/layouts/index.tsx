@@ -1,6 +1,6 @@
-import React, { PureComponent } from 'react';
+import React, { useState } from 'react';
 import { Layout, Menu, Icon, PageHeader } from 'antd';
-import menus, { Menu as IMenu, isSubMenu, defaultOpenKeys } from 'common/menus';
+import menuCreator, { Menu as IMenu, isSubMenu, defaultOpenKeys } from 'common/menus';
 import { connect } from 'dva';
 import { GlobalState, UmiComponentProps } from '@/common/types';
 import { SelectParam } from 'antd/lib/menu';
@@ -9,88 +9,77 @@ import pageHeaderInfo from 'common/pageHeaderInfo';
 
 const { Content, Sider } = Layout;
 
-const mapStateToProps = (state: GlobalState) => state;
+const mapStateToProps = ({ bookshelf }: GlobalState) => ({ bookshelf });
 type PageStateProps = ReturnType<typeof mapStateToProps>;
 type PageProps = PageStateProps & UmiComponentProps;
 
-class BasicLayout extends PureComponent<PageProps> {
-  state = {
-    collapsed: false,
-  };
-
-  onCollapse = (collapsed: boolean) => {
-    this.setState({ collapsed });
-  };
-
-  handleSelectMenu = (e: SelectParam) => {
-    this.props.history.push(e.key);
-  };
-
-  renderMenu = (menu: IMenu) => {
-    if (isSubMenu(menu)) {
-      return (
-        <Menu.SubMenu
-          key={menu.name}
-          title={
-            <span>
-              <Icon type={menu.icon} />
-              <span>{menu.name}</span>
-            </span>
-          }
-        >
-          {menu.children.map(c => this.renderMenu(c))}
-        </Menu.SubMenu>
-      );
-    }
+const renderMenu = (menu: IMenu) => {
+  if (isSubMenu(menu)) {
     return (
-      <Menu.Item key={menu.path}>
-        <Icon type={menu.icon} />
-        <span>{menu.name}</span>
-      </Menu.Item>
+      <Menu.SubMenu
+        key={menu.name}
+        title={
+          <span>
+            <Icon type={menu.icon} />
+            <span>{menu.name}</span>
+          </span>
+        }
+      >
+        {menu.children.map(c => renderMenu(c))}
+      </Menu.SubMenu>
     );
+  }
+  return (
+    <Menu.Item key={menu.path}>
+      <Icon type={menu.icon} />
+      <span>{menu.name}</span>
+    </Menu.Item>
+  );
+};
+
+const BasicLayout: React.FC<PageProps> = ({ bookshelf, history, children }) => {
+  const [collapsed, setCollapsed] = useState(false);
+
+  const handleSelectMenu = (e: SelectParam) => {
+    history.push(e.key);
   };
 
-  handleRenderSider = () => {
-    const {
-      history: { location },
-    } = this.props;
+  const handleRenderSider = () => {
     let selectedKeys: string[] = [`${location.pathname}${location.search}`];
     return (
       <Sider
         className={styles.sider}
-        collapsed={this.state.collapsed}
+        collapsed={collapsed}
         collapsible
-        onCollapse={this.onCollapse}
+        onCollapse={setCollapsed}
         breakpoint="md"
       >
         <Menu
           theme="dark"
           mode="inline"
           selectedKeys={selectedKeys}
-          onSelect={this.handleSelectMenu}
+          onSelect={handleSelectMenu}
           defaultOpenKeys={defaultOpenKeys}
         >
-          {menus.map(o => this.renderMenu(o))}
+          {menuCreator(bookshelf.list).map(renderMenu)}
         </Menu>
       </Sider>
     );
   };
 
-  render() {
-    const title = pageHeaderInfo[this.props.history.location.pathname];
-    const { collapsed } = this.state;
-    return (
-      <Layout style={{ marginLeft: collapsed ? 80 : 200 }}>
-        {this.handleRenderSider()}
-        <Layout>
-          <Content className={styles.content}>
-            {title && <PageHeader title={title.title} />}
-            <div style={{ padding: 20 }}>{this.props.children}</div>
-          </Content>
-        </Layout>
-      </Layout>
-    );
-  }
-}
+  const title = pageHeaderInfo[history.location.pathname];
 
-export default connect(mapStateToProps)(BasicLayout);
+  return (
+    <Layout style={{ marginLeft: collapsed ? 80 : 200 }}>
+      {handleRenderSider()}
+      <Layout>
+        <Content className={styles.content}>
+          {title && <PageHeader title={title.title} />}
+          <div style={{ padding: 20 }}>{children}</div>
+        </Content>
+      </Layout>
+    </Layout>
+  );
+};
+
+export default connect(mapStateToProps)(React.memo(BasicLayout));

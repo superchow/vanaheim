@@ -10,7 +10,7 @@ import {
 } from '@/actions/bookshelf';
 import dayjs from 'dayjs';
 
-const mapStateToProps = ({ loading, bookshelf }: GlobalState) => ({ loading, bookshelf });
+const mapStateToProps = ({ bookshelf }: GlobalState) => ({ bookshelf });
 type PageStateProps = ReturnType<typeof mapStateToProps>;
 type PageProps = PageStateProps & UmiComponentProps & FormComponentProps;
 
@@ -18,16 +18,7 @@ export const Bookshelf: React.FC<PageProps> = (props: PageProps) => {
   useEffect(() => {
     props.dispatch(asyncFetchBookshelf.started());
   }, []);
-
   const [showModal, setShowModel] = useState(false);
-
-  function deleteBookshelf(id: string) {
-    props.dispatch(
-      asyncDeleteBookshelf.started({
-        id,
-      })
-    );
-  }
 
   function bookshelfTable() {
     const columns = [
@@ -70,7 +61,7 @@ export const Bookshelf: React.FC<PageProps> = (props: PageProps) => {
               title={'是否删除书架'}
               okText="Yes"
               cancelText="No"
-              onConfirm={() => deleteBookshelf(id)}
+              onConfirm={() => props.dispatch(asyncDeleteBookshelf.started({ id }))}
             >
               <Button type="danger">删除</Button>
             </Popconfirm>

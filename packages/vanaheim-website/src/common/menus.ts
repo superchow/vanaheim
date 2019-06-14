@@ -1,3 +1,5 @@
+import { Bookshelf } from 'vanaheim-shared';
+import update from 'immutability-helper';
 export interface MenuNode {
   name: string;
   icon?: string;
@@ -18,9 +20,9 @@ export function isSubMenu(menu: Menu): menu is SubMenu {
   return false;
 }
 
-export const defaultOpenKeys = ['漫画', '标签', '设置'];
+export const defaultOpenKeys = ['漫画', '标签', '设置', '书架', '全部书架'];
 
-export default [
+const originMenu: SubMenu[] = [
   {
     name: '漫画',
     icon: 'picture',
@@ -48,8 +50,14 @@ export default [
           },
         ],
       },
+    ],
+  },
+  {
+    name: '书架',
+    icon: 'book',
+    children: [
       {
-        name: '书架',
+        name: '编辑书架',
         icon: 'book',
         path: '/comic/bookshelf',
       },
@@ -68,3 +76,26 @@ export default [
     ],
   },
 ];
+
+export default function menuCreator(bookshelf: Bookshelf[]) {
+  if (bookshelf.length > 0) {
+    const bookshelfMenu: SubMenu = {
+      name: '全部书架',
+      icon: 'book',
+      children: bookshelf.map(o => ({
+        name: o.title,
+        path: `/comic/bookshelf/${o.id}`,
+      })),
+    };
+    return update(originMenu, {
+      1: {
+        children: {
+          1: {
+            $set: bookshelfMenu,
+          },
+        },
+      },
+    });
+  }
+  return originMenu;
+}

@@ -4,6 +4,7 @@ import {
   ComicRawInfo,
   ComicListNode,
   Bookshelf,
+  BookshelfDetail,
 } from 'vanaheim-shared';
 import { History } from 'history';
 import { Dispatch } from 'react';
@@ -52,4 +53,5 @@ export interface ComicModel {
 
 export interface BookshelfModel {
   list: Bookshelf[];
+  detail?: BookshelfDetail;
 }

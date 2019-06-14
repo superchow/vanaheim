@@ -1,11 +1,28 @@
-import { asyncFetchBookshelf, asyncDeleteBookshelf } from './../actions/bookshelf';
 import update from 'immutability-helper';
-import { CreateBookshelfResponse, FetchBookshelfResponse } from 'vanaheim-shared';
+import {
+  CreateBookshelfResponse,
+  FetchBookshelfResponse,
+  FetchBookshelfDetailResponse,
+} from 'vanaheim-shared';
 import { DvaModelBuilder } from 'dva-model-creator';
 import { GlobalState } from '@/common/types';
-import { asyncCreateBookshelf } from '@/actions/bookshelf';
-import { createBookShelfRequest, fetchBookshelf, deleteBookshelf } from '@/service/bookshelf';
+import {
+  asyncCreateBookshelf,
+  asyncFetchBookshelf,
+  asyncDeleteBookshelf,
+  asyncBookshelfAddComic,
+  asyncFetchBookshelfDetail,
+  cleanBookshelfDetail,
+} from '@/actions/bookshelf';
+import {
+  createBookShelfRequest,
+  fetchBookshelf,
+  deleteBookshelf,
+  bookshelfAddComic,
+  fetchBookshelfDetail,
+} from '@/service/bookshelf';
 import { isUndefined } from 'util';
+import { message } from 'antd';
 
 const initState: GlobalState['bookshelf'] = {
   list: [],
@@ -67,6 +84,38 @@ builder
       },
     })
   );
+
+builder.takeEvery(asyncBookshelfAddComic, function*({ bookshelfId, comicId }, { call }) {
+  const response = yield call(bookshelfAddComic, bookshelfId, comicId);
+  if (isUndefined(response)) {
+    return;
+  }
+  message.success('添加成功');
+});
+
+builder
+  .takeEvery(asyncFetchBookshelfDetail.started, function*({ bookshelfId }, { call, put }) {
+    const response: FetchBookshelfDetailResponse = yield call(fetchBookshelfDetail, bookshelfId);
+    if (!response) {
+      return;
+    }
+    yield put(
+      asyncFetchBookshelfDetail.done({
+        params: { bookshelfId },
+        result: response.data,
+      })
+    );
+  })
+  .case(asyncFetchBookshelfDetail.done, (state, { result }) =>
+    update(state, {
+      detail: {
+        $set: result,
+      },
+    })
+  )
+  .case(cleanBookshelfDetail, ({ detail, ...rest }) => ({
+    ...rest,
+  }));
 
 builder.subscript(function loadBookshelf({ dispatch }) {
   dispatch(asyncFetchBookshelf.started());

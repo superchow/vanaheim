@@ -1,5 +1,5 @@
 import { Controller } from 'egg';
-import { DeleteComicRequest, AddComicRequest } from 'vanaheim-shared';
+import { BookshelfDeleteComicRequest, BookshelfAddComicRequest } from 'vanaheim-shared';
 
 export default class BookShelfController extends Controller {
   public async add() {
@@ -26,15 +26,23 @@ export default class BookShelfController extends Controller {
 
   public async addComic() {
     const { ctx } = this;
-    const body: AddComicRequest = ctx.request.body;
+    const body: BookshelfAddComicRequest = ctx.request.body;
     const bookShelfId = ctx.params.id;
     await this.service.bookshelf.addComic(bookShelfId, body.comicId);
     ctx.status = 204;
   }
 
+  public async detail() {
+    const { ctx } = this;
+    const bookShelfId = ctx.params.id;
+    ctx.body = {
+      data: await this.service.bookshelf.getDetail(bookShelfId),
+    };
+  }
+
   public async removeComic() {
     const { ctx } = this;
-    const body: DeleteComicRequest = ctx.request.body;
+    const body: BookshelfDeleteComicRequest = ctx.request.body;
     const bookShelfId = ctx.params.id;
     await this.service.bookshelf.removeComic(bookShelfId, body.comicId);
     ctx.status = 204;

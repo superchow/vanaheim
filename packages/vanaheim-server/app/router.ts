@@ -7,6 +7,7 @@ export default (app: Application) => {
   router.get('/api/v1/bookshelves', controller.bookshelf.list);
   router.post('/api/v1/bookshelves', controller.bookshelf.add);
   router.delete('/api/v1/bookshelves/:id', controller.bookshelf.remove);
+  router.get('/api/v1/bookshelves/:id', controller.bookshelf.detail);
   router.post('/api/v1/bookshelves/:id/comics', controller.bookshelf.addComic);
   router.delete('/api/v1/bookshelves/:id/comics', controller.bookshelf.removeComic);
 
